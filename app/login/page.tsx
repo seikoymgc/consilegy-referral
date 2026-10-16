@@ -1,51 +1,35 @@
-import { signIn, signUp } from "./actions";
+import { Header } from "@/components/Header";
 
-// URLのエラー表示をサーバーで読むため、実行時に評価する
 export const instant = false;
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ sent?: string; expired?: string }>;
 }) {
-  const { error, message } = await searchParams;
-
+  const { sent, expired } = await searchParams;
   return (
-    <main className="narrow">
-      <h1>紹介パートナー</h1>
-
-      {error && <p className="alert error">{error}</p>}
-      {message && <p className="alert ok">{message}</p>}
-
-      <form action={signIn} className="card stack">
-        <h2>ログイン</h2>
-        <label>
-          メールアドレス
-          <input name="email" type="email" required autoComplete="email" />
-        </label>
-        <label>
-          パスワード
-          <input name="password" type="password" required autoComplete="current-password" />
-        </label>
-        <button type="submit">ログインする</button>
-      </form>
-
-      <form action={signUp} className="card stack">
-        <h2>新規登録</h2>
-        <label>
-          お名前
-          <input name="name" required />
-        </label>
-        <label>
-          メールアドレス
-          <input name="email" type="email" required autoComplete="email" />
-        </label>
-        <label>
-          パスワード（8文字以上）
-          <input name="password" type="password" required minLength={8} autoComplete="new-password" />
-        </label>
-        <button type="submit">登録する</button>
-      </form>
-    </main>
+    <>
+      <Header partner={null} />
+      <main className="narrow">
+        <h1>ログイン</h1>
+        {sent && (
+          <p className="alert ok">
+            ご登録のメールアドレスにログインリンクを送りました。メールのリンクを開いてください（有効期限15分）。
+          </p>
+        )}
+        {expired && (
+          <p className="alert error">ログインリンクの有効期限が切れたか、すでに使われています。もう一度お送りします。</p>
+        )}
+        <form action="/api/login/" method="post" className="card stack">
+          <label>
+            メールアドレス
+            <input name="email" type="email" required autoComplete="email" />
+          </label>
+          <button type="submit">ログインリンクを送る</button>
+        </form>
+        <p>まだ登録していない方は <a href="/#signup">紹介パートナーに申し込む</a></p>
+      </main>
+    </>
   );
 }
