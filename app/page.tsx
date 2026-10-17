@@ -162,9 +162,9 @@ export default async function Home({
               <h2>あの人に、合いそうなものを。</h2>
             </div>
             <p>
-              仕事の困りごとを解決する、Consilegyの製品。
+              法人営業・受託開発・代理店・スクール。
               <br />
-              身近な方の顔を思い浮かべながら、ご覧ください。
+              紹介先の仕事に合うエディションをお選びください。
             </p>
           </div>
           <div className="product-grid">

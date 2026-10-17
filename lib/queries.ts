@@ -1,6 +1,7 @@
 import { appUrl, db, operatorId } from "./db";
 import {
   REVENUE_EDITIONS,
+  editionKit,
   revenueEdition,
   type RevenueEdition,
 } from "./product-editions";
@@ -83,49 +84,36 @@ export async function getKit(
   const link = referralLink(partnerCode, product.slug, edition);
   const fill = (s: string | null | undefined) =>
     (s ?? "").replaceAll("{link}", link);
-  const school = edition === "b2c";
+  const baseKit = {
+    tagline: fill(kit?.tagline),
+    forward_message: fill(kit?.forward_message),
+    fit: kit?.fit ?? "",
+    pricing: kit?.pricing ?? "",
+    materials: (kit?.materials ?? []) as { title: string; url: string }[],
+    screens: (kit?.screens ?? []) as { title: string; url: string }[],
+    faq: (kit?.faq ?? []) as { q: string; a: string }[],
+  };
+  const specificKit = edition ? editionKit(edition, link) : undefined;
+  // Keep the operator-managed B2B kit; provide targeted text and materials for
+  // the other editions rather than reusing general sales copy.
+  const content = specificKit
+    ? edition === "b2b"
+      ? {
+          ...baseKit,
+          tagline: baseKit.tagline || specificKit.tagline,
+          forward_message:
+            baseKit.forward_message || specificKit.forward_message,
+          fit: baseKit.fit || specificKit.fit,
+        }
+      : specificKit
+    : baseKit;
   return {
     product: edition
       ? { ...product, name: REVENUE_EDITIONS[edition].name }
       : product,
     edition,
     link,
-    tagline: school
-      ? `教室・スクールの生徒管理、レッスン記録、月謝管理をひとつにするRevenue CRMです。\n${link}`
-      : fill(kit?.tagline),
-    forward_message: school
-      ? `教室の運営に合いそうなサービスがあったので、ご紹介します。\n\nRevenue CRMのスクール版は、生徒の在籍・レッスン記録・月謝をまとめて管理できるサービスです。LINEでの連絡にも対応しています。\n詳しくはこちらをご覧ください。\n${link}`
-      : fill(kit?.forward_message),
-    fit: school
-      ? "生徒の在籍・休会・退会、レッスン記録、月謝をまとめて管理したい教室・スクール。講師間の引き継ぎや、生徒への連絡を整えたい方に。"
-      : (kit?.fit ?? ""),
-    pricing: school
-      ? "在籍中の生徒数に応じたプランです。料金と無料トライアルの詳細は、スクール版の公式ページでご確認ください。"
-      : (kit?.pricing ?? ""),
-    materials: (school
-      ? [
-          {
-            title: "スクール版の機能・料金を見る",
-            url: REVENUE_EDITIONS.b2c.url,
-          },
-          {
-            title: "スクール版の紹介資料",
-            url: "https://consilegy.com/crm/school/download/",
-          },
-        ]
-      : (kit?.materials ?? [])) as { title: string; url: string }[],
-    screens: (school ? [] : (kit?.screens ?? [])) as {
-      title: string;
-      url: string;
-    }[],
-    faq: (school
-      ? [
-          {
-            q: "どんな教室に合いますか？",
-            a: "生徒の在籍やレッスンの記録、月謝管理をまとめたい教室・スクール向けです。詳細はスクール版の公式ページをご確認ください。",
-          },
-        ]
-      : (kit?.faq ?? [])) as { q: string; a: string }[],
+    ...content,
   };
 }
 
