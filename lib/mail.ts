@@ -1,11 +1,12 @@
 // メール送信（Resend）。差出人は Consilegy（no-reply）。
 // 仕組みから自動で届くメールなので、個人の署名ではなく、サービス名と会社名だけを末尾に入れる。
-// 返信は ADMIN_NOTIFY_EMAIL に届くようにする（no-reply に返信されても受け取れないため）。
+// お問い合わせは consilegy.com のお問い合わせフォームで受ける。
 export const MAIL_FOOTER = [
   "──────────",
   "Consilegy 紹介パートナー",
   "Consilegy合同会社",
   "https://referral.consilegy.com",
+  "お問い合わせ：https://consilegy.com/contact/",
 ].join("\n");
 
 export async function sendMail(opts: { to: string; subject: string; text: string }): Promise<void> {
@@ -24,7 +25,6 @@ export async function sendMail(opts: { to: string; subject: string; text: string
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from, to: [opts.to], subject: opts.subject, text,
-      ...(process.env.ADMIN_NOTIFY_EMAIL ? { reply_to: process.env.ADMIN_NOTIFY_EMAIL } : {}),
     }),
   });
   if (!res.ok) {

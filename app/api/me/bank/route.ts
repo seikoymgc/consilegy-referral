@@ -35,7 +35,7 @@ async function save(req: Request) {
     await sendMail({
       to: p.email,
       subject: "【Consilegy 紹介パートナー】振込先が変更されました",
-      text: `${p.name} 様\n\n振込先が変更されました（口座番号 下4桁：${bank.account_number.slice(-4)}）。\nお心当たりのない場合は、このメールにご返信ください。`,
+      text: `${p.name} 様\n\n振込先が変更されました（口座番号 下4桁：${bank.account_number.slice(-4)}）。\nお心当たりのない場合は、お問い合わせフォームからご連絡ください。\nhttps://consilegy.com/contact/`,
     });
   }
   return respond(req, withParam("/my/settings/", "saved", "1"), { ok: true, last4: bank.account_number.slice(-4) });
