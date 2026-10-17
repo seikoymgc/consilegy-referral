@@ -50,13 +50,14 @@ export function MyNav({ current }: { current: string }) {
     ["/my/rewards/", "報酬・支払い"],
     ["/my/settings/", "登録情報"],
   ];
-  const shortLabels = ["ホーム", "紹介", "案件", "報酬", "設定"];
+  const shortLabels = ["ホーム", "紹介する", "案件", "報酬", "設定"];
   return (
     <nav className="subnav partner-nav" aria-label="マイページ">
       {items.map(([href, label], index) => (
         <Link
           key={href}
           aria-label={label}
+          className={href === "/my/products/" ? "nav-primary" : undefined}
           href={href}
           aria-current={current === href ? "page" : undefined}
         >

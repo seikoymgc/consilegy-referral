@@ -18,7 +18,7 @@ export default async function MyHome() {
       title={`${p.name} さん、こんにちは。`}
       description="紹介の状況と、つながりから生まれた成果を確認できます。"
       action={
-        <Link href="/my/products/" className="button">
+        <Link href="/my/products/" className="button primary-referral-button">
           製品を紹介する <span aria-hidden="true">↗</span>
         </Link>
       }

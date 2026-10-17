@@ -2858,3 +2858,65 @@ label,
 .workspace-main dd {
   overflow-wrap: anywhere;
 }
+
+/* Make starting a referral the primary action on every screen. */
+.product-card .product-link {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 7px;
+  padding: 13px 18px;
+  min-height: 50px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.product-card .product-link:hover {
+  background: var(--accent-hover);
+}
+.partner-nav.subnav a.nav-primary {
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 16px;
+  min-height: 52px;
+  margin: 6px 0 10px;
+  box-shadow: 0 4px 12px #1e40af24;
+}
+.partner-nav.subnav a.nav-primary:hover {
+  background: var(--accent-hover);
+}
+.partner-nav.subnav a.nav-primary[aria-current="page"] {
+  background: #19358c;
+  box-shadow: inset 0 0 0 2px #93c5fd;
+}
+.nav-primary .nav-number {
+  display: none;
+}
+.nav-primary .nav-arrow {
+  color: #fff;
+  opacity: 1;
+}
+.workspace-action .primary-referral-button {
+  font-size: 16px;
+  padding: 15px 25px;
+  min-height: 56px;
+  box-shadow: 0 4px 12px #1e40af24;
+}
+@media (max-width: 760px) {
+  .partner-nav.subnav {
+    grid-template-columns: 1fr 1.4fr 0.9fr 0.9fr 0.9fr;
+    align-items: center;
+  }
+  .partner-nav.subnav a.nav-primary {
+    font-size: 14px;
+    white-space: nowrap;
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 4px;
+  }
+  .workspace-action:has(.primary-referral-button),
+  .workspace-action .primary-referral-button {
+    width: 100%;
+  }
+}
