@@ -62,9 +62,11 @@ export function editionDestination(
   if (slug !== "revenue-crm" || (edition !== "b2b" && edition !== "b2c"))
     return destination;
   const url = new URL(destination);
-  // Edition routing only applies to the official product pages. Preserve custom
-  // destinations configured by the operator, including their query parameters.
-  if (url.origin !== "https://consilegy.com") return destination;
+  // The live product may point to the shared demo picker. Edition-specific
+  // referrals land on the corresponding official product page instead.
+  const sharedDemos = url.origin === "https://crm.consilegy.com" && /^\/demos\/?$/.test(url.pathname);
+  if (url.origin !== "https://consilegy.com" && !sharedDemos) return destination;
+  url.hostname = "consilegy.com";
   url.pathname = edition === "b2c" ? "/crm/school/" : "/crm/";
   url.hash = "";
   return url.toString();
