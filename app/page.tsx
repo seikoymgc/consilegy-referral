@@ -52,16 +52,14 @@ export default async function Home({
               <span className="status-dot" /> CONSILEGY PARTNER PROGRAM
             </p>
             <h1>
-              いいつながりが、
+              「あの会社に、
               <br />
-              次の<span>きっかけ</span>に。
+              <span>教えたい</span>」
             </h1>
             <p className="hero-description">
-              「この人に合いそう」を、一通の転送で。
+              Consilegyの製品を紹介すると、報酬が受け取れます。
               <br />
-              あなたの紹介が、誰かの仕事を前に進めます。
-              <br />
-              そのきっかけに、私たちから報酬を。
+              あなたの作業は、紹介文の転送だけです。
             </p>
             <div className="actions">
               <a href="#signup" className="button">
@@ -404,7 +402,7 @@ export default async function Home({
                   </span>
                 </label>
                 <label className="check">
-                  <input type="checkbox" name="marketing" />{" "}
+                  <input type="checkbox" name="marketing" defaultChecked />{" "}
                   お知らせメールを受け取る
                 </label>
               </div>

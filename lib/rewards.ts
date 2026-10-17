@@ -114,7 +114,7 @@ export async function applyRefund(ev: EventRow, refundOf: string | null): Promis
   if (!orig) return "ignored";
 
   const { data: c } = await db().from("commissions")
-    .select("id, operator_id, partner_id, referral_id, product_id, kind, base_amount, rate, amount, status")
+    .select("id, operator_id, partner_id, referral_id, product_id, kind, base_amount, rate, amount, status, payout_id")
     .eq("event_id", orig.id).maybeSingle();
   if (!c) return "ignored";
 
@@ -127,7 +127,8 @@ export async function applyRefund(ev: EventRow, refundOf: string | null): Promis
     });
     await db().from("commissions").update({ status: "offset" }).eq("id", c.id);
   } else if (c.status !== "cancelled") {
-    await db().from("commissions").update({ status: "cancelled" }).eq("id", c.id);
+    await db().from("commissions").update({ status: "cancelled", payout_id: null }).eq("id", c.id);
+    if (c.payout_id) await recomputePayout(c.payout_id);
   }
   return "applied";
 }
@@ -256,7 +257,7 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
 
   for (const [partnerId, e] of byPartner) {
     const { data: p } = await db().from("partners")
-      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, status")
+      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, tax_checked_at, status")
       .eq("id", partnerId).single();
     if (!p || p.payout_method === "none") continue; // 受け取らない人は台帳だけ
     if (e.total < MIN_PAYOUT) { counts.carriedOver++; continue; }
@@ -269,10 +270,10 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
       });
       continue;
     }
-    if (p.is_professional) {
+    if (p.is_professional && !p.tax_checked_at) {
       counts.professionalHold++;
       await notifyAdmin("【紹介】士業の紹介者の支払いを保留しました",
-        `${p.name} 様（${e.total}円）。源泉徴収の要否を顧問税理士に確認してから確定してください。`);
+        `${p.name} 様（${e.total}円）。源泉徴収の要否を顧問税理士に確認し、管理画面の「紹介者」で「税理士に確認済み」にしてください。次の締めで支払いの下書きを作ります。`);
       continue;
     }
 
@@ -290,4 +291,19 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
     counts.drafts++;
   }
   return counts;
+}
+
+// 振込前の支払いから報酬が外れたとき、支払額を計算し直す（0円以下になったら下書きを消す）
+async function recomputePayout(payoutId: string): Promise<void> {
+  const { data: payout } = await db().from("payouts").select("id, status").eq("id", payoutId).maybeSingle();
+  if (!payout || payout.status === "paid") return;
+  const { data: rows } = await db().from("commissions").select("amount").eq("payout_id", payoutId).eq("status", "confirmed");
+  const total = (rows ?? []).reduce((s, r) => s + r.amount, 0);
+  if (total <= 0) {
+    await db().from("commissions").update({ payout_id: null }).eq("payout_id", payoutId);
+    await db().from("payouts").delete().eq("id", payoutId);
+  } else {
+    await db().from("payouts").update({ amount: total, status: "draft" }).eq("id", payoutId);
+  }
+  await notifyAdmin("【紹介】返金で支払いの額が変わりました", `${appUrl()}/admin/payouts/ で確認してください。`);
 }

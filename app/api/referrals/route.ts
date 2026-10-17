@@ -26,6 +26,10 @@ export async function POST(req: Request) {
     return respond(req, withParam(back, "error", "紹介先の同意の確認が必要です"), { error: "consent_required" }, 400);
   }
 
+  if (b.connection_method === "contact_ok" && !b.contact_info) {
+    return respond(req, withParam(back, "error", "山口から直接連絡する場合は、紹介先の連絡先を入れてください"), { error: "contact_required" }, 400);
+  }
+
   const { data: product } = await db().from("products")
     .select("id, name, status").eq("operator_id", p.operator_id).eq("slug", b.product).maybeSingle();
   if (!product || product.status !== "public") {

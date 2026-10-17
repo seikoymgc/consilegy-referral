@@ -1,4 +1,13 @@
+import holidayJp from "@holiday-jp/holiday_jp";
+const HOLIDAYS: Record<string, unknown> = holidayJp.holidays;
 import { db } from "./db";
+
+// つなぎ方（consilegy.com の紹介キットのフォームと同じ選択肢）
+export const CONNECTION_LABEL: Record<string, string> = {
+  introduce: "私からメール・チャットでつなぐ",
+  meet: "三者で会う・オンラインで話す",
+  contact_ok: "山口から直接連絡してよいと、紹介先の了承を得ている",
+};
 
 export const STATUS_LABEL: Record<string, string> = {
   pending: "受理待ち",
@@ -27,15 +36,25 @@ export const KIND_LABEL: Record<string, string> = {
 };
 
 // 営業日（土日を除く）を足す。祝日は考慮していない（管理画面の期限表示は目安）
+// 営業日：土日・祝日（振替休日を含む）・年末年始（12/31〜1/3）を除く。日付は日本時間で数える。
+const JST = 9 * 60 * 60 * 1000;
+export function isBusinessDayJst(jst: Date): boolean {
+  const w = jst.getUTCDay();
+  if (w === 0 || w === 6) return false;
+  const m = jst.getUTCMonth() + 1, day = jst.getUTCDate();
+  if ((m === 12 && day === 31) || (m === 1 && day <= 3)) return false;
+  const key = `${jst.getUTCFullYear()}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return !(key in HOLIDAYS);
+}
+
 export function addBusinessDays(from: Date, days: number): Date {
-  const d = new Date(from);
+  const d = new Date(from.getTime() + JST); // 日本時間の暦で数える
   let added = 0;
   while (added < days) {
-    d.setDate(d.getDate() + 1);
-    const w = d.getDay();
-    if (w !== 0 && w !== 6) added++;
+    d.setUTCDate(d.getUTCDate() + 1);
+    if (isBusinessDayJst(d)) added++;
   }
-  return d;
+  return new Date(d.getTime() - JST);
 }
 
 export function addMonths(date: Date, months: number): Date {

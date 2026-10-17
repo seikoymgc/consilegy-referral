@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePartner } from "@/lib/auth";
 import { listProducts, listReferrals } from "@/lib/queries";
-import { STATUS_LABEL, addBusinessDays, addMonths, yen, ymd } from "@/lib/referrals";
+import { CONNECTION_LABEL, STATUS_LABEL, addBusinessDays, addMonths, yen, ymd } from "@/lib/referrals";
 import { Header, MyNav, Notice } from "@/components/Header";
 
 export const instant = false;
@@ -79,13 +79,11 @@ export default async function MyReferrals({
             <label>会社名<input name="company_name" required /></label>
             <label>ご担当者のお名前<input name="contact_name" /></label>
             <label>役職<input name="contact_title" /></label>
-            <label>連絡先（メールまたは電話）<input name="contact_info" /></label>
+            <label>連絡先（メールアドレスまたは電話番号）<input name="contact_info" /><span className="label">「山口から直接連絡」を選ぶ場合だけ必要です。それ以外は空欄で構いません。</span></label>
             <label>
               つなぎ方
               <select name="connection_method" defaultValue="introduce">
-                <option value="introduce">私から紹介メールでつなぐ</option>
-                <option value="contact_ok">Consilegyから連絡してよい（同意済み）</option>
-                <option value="other">その他</option>
+                {Object.entries(CONNECTION_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
             </label>
             <label>状況メモ<textarea name="note" rows={3} /></label>

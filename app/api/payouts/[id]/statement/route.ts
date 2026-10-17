@@ -1,14 +1,33 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { apiPartner } from "@/lib/guard";
+import { currentPartner } from "@/lib/auth";
+import { STATEMENT_BUCKET, issueStatement } from "@/lib/statement";
 
-// 支払通知書PDF（自分の支払いのものだけ）。PDF生成は未実装。
-export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  const p = await apiPartner(req);
-  if (p instanceof NextResponse) return p;
+// 支払通知書PDF。紹介者は自分の支払いのものだけ。管理者は運営会社の支払いすべて。
+export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const me = await currentPartner();
+  if (!me) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
-  const { data: payout } = await db().from("payouts")
-    .select("id, statement_pdf_path").eq("id", id).eq("partner_id", p.id).maybeSingle();
+
+  let q = db().from("payouts").select("id, status, statement_number, statement_pdf_path")
+    .eq("id", id).eq("operator_id", me.operator_id);
+  if (me.role !== "admin") q = q.eq("partner_id", me.id);
+  const { data: payout } = await q.maybeSingle();
   if (!payout) return NextResponse.json({ error: "not_found" }, { status: 404 });
-  return NextResponse.json({ error: "statement_not_ready", message: "支払通知書PDFは準備中です" }, { status: 501 });
+  if (payout.status !== "paid") {
+    return NextResponse.json({ error: "not_paid", message: "支払通知書は振込後に発行されます" }, { status: 409 });
+  }
+
+  const key = payout.statement_pdf_path ?? (await issueStatement(payout.id));
+  const { data: file, error } = await db().storage.from(STATEMENT_BUCKET).download(key);
+  if (error || !file) return NextResponse.json({ error: "not_found" }, { status: 404 });
+
+  if (me.role === "admin") console.log(`[audit] statement ${payout.id} viewed by ${me.id} at ${new Date().toISOString()}`);
+  return new NextResponse(await file.arrayBuffer(), {
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `inline; filename="${payout.statement_number ?? "statement"}.pdf"`,
+      "Cache-Control": "private, no-store",
+    },
+  });
 }

@@ -10,7 +10,8 @@ export default async function MyRewards() {
   const [comms, payouts] = await Promise.all([listCommissions(p.id), listPayouts(p.id)]);
   const unpaid = comms.filter((c) => c.status === "confirmed").reduce((s, c) => s + c.amount, 0);
   const scheduled = payouts.filter((x) => x.status !== "paid").reduce((s, x) => s + x.amount, 0);
-  const carry = Math.max(unpaid - scheduled, 0);
+  const balance = unpaid - scheduled;
+  const carry = Math.max(balance, 0);
 
   return (
     <>
@@ -25,6 +26,7 @@ export default async function MyRewards() {
             繰り越し中：<strong>{yen(carry)}</strong>
             （全製品の合計が5,000円以上になった月に、翌月末にまとめてお振込みします）
           </p>
+          {balance < 0 && <p className="label">取り消された報酬 {yen(-balance)} は、次回以降の報酬と相殺します。</p>}
           {p.payout_method === "none" && <p className="label">「報酬を受け取らない」を選んでいるため、お支払いは作られません。</p>}
         </section>
 

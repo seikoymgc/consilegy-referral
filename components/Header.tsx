@@ -90,7 +90,7 @@ export function Notice({
   return (
     <>
       {params.error && <p className="alert error">{params.error}</p>}
-      {params.saved && <p className="alert ok">保存しました。</p>}
+      {params.saved && <p className="alert ok">{params.saved === "1" ? "保存しました。" : params.saved}</p>}
     </>
   );
 }

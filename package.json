@@ -9,8 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@holiday-jp/holiday_jp": "^2.5.2",
+    "@pdf-lib/fontkit": "^1.1.1",
     "@supabase/supabase-js": "^2.118.0",
+    "iconv-lite": "^0.7.3",
     "next": "16.4.2",
+    "pdf-lib": "^1.17.1",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

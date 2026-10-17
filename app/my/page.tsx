@@ -14,7 +14,7 @@ export default async function MyHome() {
   if (p.payout_method === "bank" && !p.bank_last4 && s.confirmedTotal > 0) {
     todos.push("報酬の振込先を登録してください（登録情報）");
   }
-  if (s.referralCount === 0) todos.push("「紹介する」から紹介リンクを取り出して、合いそうな人に送ってみましょう");
+  if (s.referralCount === 0) todos.push("「紹介する」から紹介リンクを取り出して、知り合いの会社に送ってみましょう");
 
   return (
     <>
