@@ -2,6 +2,13 @@ import holidayJp from "@holiday-jp/holiday_jp";
 const HOLIDAYS: Record<string, unknown> = holidayJp.holidays;
 import { db } from "./db";
 
+// つなぎ方（consilegy.com の紹介キットのフォームと同じ選択肢）
+export const CONNECTION_LABEL: Record<string, string> = {
+  introduce: "私からメール・チャットでつなぐ",
+  meet: "三者で会う・オンラインで話す",
+  contact_ok: "山口から直接連絡してよいと、紹介先の了承を得ている",
+};
+
 export const STATUS_LABEL: Record<string, string> = {
   pending: "受理待ち",
   accepted: "受理",

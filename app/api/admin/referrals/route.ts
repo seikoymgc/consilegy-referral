@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const back = "/admin/referrals/";
 
   const { data: ref } = await db().from("referrals")
-    .select("id, product_id, product_contract_id, status, operator_id")
+    .select("id, product_id, product_contract_id, status, operator_id, has_in_product_referral")
     .eq("id", b.id ?? "").eq("operator_id", admin.operator_id).maybeSingle();
   if (!ref) return respond(req, withParam(back, "error", "紹介案件が見つかりません"), { error: "not_found" }, 404);
 
@@ -50,8 +50,16 @@ export async function POST(req: Request) {
     case "manual_service_payment": {
       // 製品から通知が来ない入金（請求書・振込の導入支援など）の手入力
       const amount = Math.trunc(Number(b.amount_excl_tax));
-      if (!ref.product_contract_id || !(amount > 0)) {
-        return respond(req, withParam(back, "error", "契約IDの紐づけと、税抜の金額が必要です"), { error: "invalid" }, 400);
+      if (!(amount > 0)) {
+        return respond(req, withParam(back, "error", "税抜の金額を入れてください"), { error: "invalid" }, 400);
+      }
+      if (ref.has_in_product_referral) {
+        return respond(req, withParam(back, "error", "製品内の紹介が付いた契約には報酬を付けられません"), { error: "in_product" }, 400);
+      }
+      if (!ref.product_contract_id) {
+        // 製品の契約がない導入支援だけの紹介先：紹介案件ごとの仮の契約IDで台帳をつなぐ
+        ref.product_contract_id = `manual-${ref.id}`;
+        await db().from("referrals").update({ product_contract_id: ref.product_contract_id }).eq("id", ref.id);
       }
       const { data: ev, error } = await db().from("product_events").insert({
         operator_id: ref.operator_id, product_id: ref.product_id, kind: "payment",

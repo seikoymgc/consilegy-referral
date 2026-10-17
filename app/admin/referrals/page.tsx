@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { STATUS_LABEL, addBusinessDays, ymd } from "@/lib/referrals";
+import { CONNECTION_LABEL, STATUS_LABEL, addBusinessDays, ymd } from "@/lib/referrals";
 import { AdminNav, Header, Notice } from "@/components/Header";
 
 export const instant = false;
@@ -63,7 +63,7 @@ export default async function AdminReferrals({
               <p>
                 紹介者：{partner?.name}（{partner?.email}）<br />
                 担当者：{r.contact_name ?? "—"} {r.contact_title ?? ""} / 連絡先：{r.contact_info ?? "—"}<br />
-                つなぎ方：{r.connection_method ?? "—"} / 登録日：{ymd(r.created_at)}
+                つなぎ方：{CONNECTION_LABEL[r.connection_method ?? ""] ?? r.connection_method ?? "—"} / 登録日：{ymd(r.created_at)}
                 {r.status === "pending" && <> / <strong>受理の期限：{ymd(addBusinessDays(new Date(r.created_at), 3))}</strong>{r.channel === "link" && "（過ぎると自動で受理）"}</>}
                 <br />
                 契約ID：{r.product_contract_id ?? "未紐づけ"}{r.has_in_product_referral && "（製品内の紹介あり）"}
