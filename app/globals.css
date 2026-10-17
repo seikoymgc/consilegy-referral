@@ -29,7 +29,7 @@ body {
   font-family:
     "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans",
     Meiryo, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.85;
   -webkit-font-smoothing: antialiased;
 }
@@ -125,7 +125,7 @@ p {
 }
 .label {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   margin: 0;
 }
 .value {
@@ -139,7 +139,7 @@ label {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   position: relative;
 }
@@ -156,7 +156,7 @@ select {
 }
 input::placeholder {
   color: #78716c;
-  font-size: 12px;
+  font-size: 14px;
 }
 input:focus,
 textarea:focus,
@@ -176,7 +176,7 @@ button,
   justify-content: center;
   align-items: center;
   gap: 24px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.8;
 }
@@ -205,7 +205,7 @@ button.danger {
 }
 button.small {
   padding: 5px 12px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .topbar {
   height: 94px;
@@ -233,16 +233,16 @@ button.small {
   height: auto;
 }
 .brand-caption {
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1.4;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 .topbar nav {
   display: flex;
   gap: 30px;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 .topbar nav > a:not(.button) {
   text-decoration: none;
@@ -252,7 +252,7 @@ button.small {
   color: var(--accent-hover);
 }
 .topbar .header-cta {
-  font-size: 11px;
+  font-size: 14px;
   padding: 10px 17px;
   gap: 16px;
 }
@@ -263,7 +263,7 @@ button.small {
   padding: 14px 18px;
   border-radius: 8px;
   margin: 16px 0;
-  font-size: 13px;
+  font-size: 14px;
 }
 .alert.ok {
   background: var(--ok-bg);
@@ -276,7 +276,7 @@ button.small {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
 }
 th,
 td {
@@ -287,12 +287,12 @@ td {
 th {
   background: var(--surface);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
 }
 code {
   font-family: ui-monospace, monospace;
-  font-size: 12px;
+  font-size: 14px;
 }
 ul.plain {
   list-style: none;
@@ -319,7 +319,7 @@ ul.plain {
   padding: 9px 16px;
   border-radius: 6px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 .subnav a[aria-current="page"],
@@ -330,7 +330,7 @@ ul.plain {
 }
 .badge {
   display: inline-block;
-  font-size: 10px;
+  font-size: 14px;
   padding: 3px 9px;
   margin-left: 8px;
   border-radius: 4px;
@@ -347,7 +347,7 @@ label.check {
   align-items: center;
   gap: 10px;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 14px;
 }
 input[type="checkbox"] {
   width: 15px;
@@ -398,7 +398,7 @@ dd {
   padding: 0 40px;
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.16em;
   line-height: 1.5;
@@ -444,7 +444,7 @@ dd {
   vertical-align: 2px;
 }
 .hero-description {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 2.2;
   color: var(--muted);
   margin-bottom: 29px;
@@ -454,13 +454,13 @@ dd {
 }
 .text-link {
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   gap: 16px;
   align-items: center;
 }
 .hero-note {
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 0.035em;
   color: var(--muted);
   margin: 16px 0 0;
@@ -508,7 +508,7 @@ dd {
   position: absolute;
   left: 43px;
   top: 34px;
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1.7;
   letter-spacing: 0.12em;
   color: #57534e;
@@ -537,7 +537,7 @@ dd {
 }
 .person-card small {
   display: block;
-  font-size: 9px;
+  font-size: 14px;
   color: var(--muted);
 }
 .person-card strong {
@@ -568,7 +568,7 @@ dd {
   position: absolute;
   bottom: -3px;
   right: 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #3b82f6;
 }
 .mini-star {
@@ -588,7 +588,7 @@ dd {
   display: flex;
   gap: 16px;
   align-items: center;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.8;
   transform: rotate(3deg);
   z-index: 2;
@@ -617,7 +617,7 @@ dd {
   position: absolute;
   top: 167px;
   right: 24px;
-  font-size: 10px;
+  font-size: 14px;
   background: #fff;
   color: var(--accent);
   border: 1px solid #bfdbfe;
@@ -648,7 +648,7 @@ dd {
   position: absolute;
   bottom: 16px;
   left: 35px;
-  font-size: 7px;
+  font-size: 14px;
   letter-spacing: 0.17em;
   color: #57534e;
 }
@@ -660,7 +660,7 @@ dd {
   gap: 20px;
 }
 .benefit-strip p {
-  font-size: 11px;
+  font-size: 14px;
   margin: 0;
   text-align: center;
   border-right: 1px solid var(--line);
@@ -677,7 +677,7 @@ dd {
   margin-right: 16px;
 }
 .benefit-strip strong {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--fg);
   margin-left: 8px;
@@ -701,14 +701,14 @@ dd {
   margin: 0;
 }
 .section-heading > p {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   line-height: 1.9;
   margin-bottom: 3px;
 }
 .product-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 22px;
 }
 .product-card {
@@ -737,7 +737,7 @@ dd {
   font-size: 25px;
 }
 .product-status {
-  font-size: 8px;
+  font-size: 14px;
   letter-spacing: 0.1em;
   color: #57534e;
   border: 1px solid var(--line);
@@ -767,7 +767,7 @@ dd {
   margin-bottom: 12px;
 }
 .product-description {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   min-height: 46px;
   line-height: 1.9;
@@ -779,13 +779,13 @@ dd {
   margin: 3px 0 22px;
 }
 .reward-info .eyebrow {
-  font-size: 9px;
+  font-size: 14px;
   margin-bottom: 8px;
 }
 .reward-info ul {
   padding-left: 16px;
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--accent);
 }
 .reward-info li + li {
@@ -799,7 +799,7 @@ dd {
   padding-top: 17px;
   margin-top: auto;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 .product-link > span {
@@ -816,7 +816,7 @@ dd {
   color: #57534e;
 }
 .coming-soon {
-  font-size: 10px;
+  font-size: 14px;
   color: #57534e;
   border-top: 1px solid var(--line);
   padding-top: 20px;
@@ -841,7 +841,7 @@ dd {
   margin-bottom: 13px;
 }
 .promise-section p:not(.eyebrow) {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .promise-section ul {
@@ -853,7 +853,7 @@ dd {
 .promise-section li {
   padding: 17px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   align-items: baseline;
   gap: 20px;
@@ -910,7 +910,7 @@ dd {
   margin-bottom: 10px;
 }
 .steps p {
-  font-size: 11px;
+  font-size: 14px;
   line-height: 2;
   color: var(--muted);
   margin: 0;
@@ -938,11 +938,11 @@ dd {
   flex-shrink: 0;
 }
 .payout-note h3 {
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 5px;
 }
 .payout-note p {
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.9;
   color: var(--muted);
   margin: 0;
@@ -961,7 +961,7 @@ dd {
   margin-bottom: 8px;
 }
 .rules-section p {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .rules-section details {
@@ -974,7 +974,7 @@ dd {
   list-style: none;
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 .rules-section summary::-webkit-details-marker {
@@ -985,7 +985,7 @@ dd {
 }
 .rules-section details ul {
   padding-left: 18px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .rules-section details li {
@@ -1012,7 +1012,7 @@ dd {
   margin-bottom: 18px;
 }
 .signup-intro > p:not(.eyebrow) {
-  font-size: 11px;
+  font-size: 14px;
   line-height: 2.1;
   color: var(--muted);
 }
@@ -1034,12 +1034,12 @@ dd {
 }
 .signup-free small {
   display: block;
-  font-size: 9px;
+  font-size: 14px;
   color: var(--muted);
 }
 .signup-intro .signup-login {
   margin-top: 34px;
-  font-size: 10px;
+  font-size: 14px;
 }
 .signup-login a {
   font-weight: 500;
@@ -1056,7 +1056,7 @@ dd {
   margin-bottom: 5px;
 }
 .signup-form > .label {
-  font-size: 10px;
+  font-size: 14px;
   margin-bottom: 25px;
 }
 .form-grid {
@@ -1066,7 +1066,7 @@ dd {
 }
 .signup-form label:not(.check) {
   display: block;
-  font-size: 11px;
+  font-size: 14px;
 }
 .signup-form label:not(.check) > input {
   display: block;
@@ -1074,7 +1074,7 @@ dd {
 }
 .required,
 .optional {
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 400;
   margin-left: 6px;
   vertical-align: 1px;
@@ -1096,11 +1096,11 @@ dd {
   padding-top: 18px;
 }
 .form-checks .check {
-  font-size: 10px;
+  font-size: 14px;
 }
 .signup-form button {
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 14px;
   padding: 14px 18px;
 }
 .site-footer {
@@ -1112,7 +1112,7 @@ dd {
   justify-content: space-between;
   gap: 24px;
   color: #57534e;
-  font-size: 9px;
+  font-size: 14px;
 }
 .footer-brand {
   font-size: 22px;
@@ -1123,7 +1123,7 @@ dd {
 }
 .footer-brand span {
   display: block;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.06em;
   margin-top: 8px;
@@ -1134,7 +1134,7 @@ dd {
 }
 .site-footer > a:last-child {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 14px;
   text-decoration: none;
 }
 #signup:has(.alert.error) {
@@ -1183,7 +1183,7 @@ dd {
   .reward-chip {
     right: 12px;
     top: 157px;
-    font-size: 9px;
+    font-size: 14px;
   }
   .art-caption {
     left: 30px;
@@ -1219,7 +1219,7 @@ dd {
     font-size: 25px;
   }
   .promise-section li {
-    font-size: 11px;
+    font-size: 14px;
     gap: 13px;
   }
   .signup-section {
@@ -1253,20 +1253,20 @@ dd {
     width: 120px;
   }
   .brand-caption {
-    font-size: 8px;
+    font-size: 14px;
   }
   .brand {
     gap: 5px;
   }
   .topbar nav {
     gap: 16px;
-    font-size: 10px;
+    font-size: 14px;
   }
   .header-product-link {
     display: none;
   }
   .topbar .header-cta {
-    font-size: 9px;
+    font-size: 14px;
     padding: 9px 10px;
     gap: 8px;
   }
@@ -1282,7 +1282,7 @@ dd {
     gap: 30px;
   }
   .hero .eyebrow {
-    font-size: 9px;
+    font-size: 14px;
     margin-bottom: 20px;
   }
   .hero h1 {
@@ -1291,11 +1291,11 @@ dd {
     margin-bottom: 18px;
   }
   .hero-description {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 24px;
   }
   .hero .button {
-    font-size: 12px;
+    font-size: 14px;
     padding: 14px 18px;
     gap: 18px;
   }
@@ -1303,11 +1303,11 @@ dd {
     gap: 22px;
   }
   .text-link {
-    font-size: 11px;
+    font-size: 14px;
     gap: 10px;
   }
   .hero-note {
-    font-size: 9px;
+    font-size: 14px;
   }
   .connection-art {
     height: 345px;
@@ -1334,7 +1334,7 @@ dd {
   }
   .art-caption {
     top: 25px;
-    font-size: 8px;
+    font-size: 14px;
   }
   .spark-one {
     top: 258px;
@@ -1350,17 +1350,17 @@ dd {
     grid-template-columns: 1fr 1fr 1.2fr;
   }
   .benefit-strip p {
-    font-size: 8px;
+    font-size: 14px;
     line-height: 1.8;
     padding-right: 5px;
   }
   .benefit-strip p > span {
     display: block;
-    font-size: 10px;
+    font-size: 14px;
     margin: 0 0 5px;
   }
   .benefit-strip strong {
-    font-size: 9px;
+    font-size: 14px;
     margin-top: 3px;
   }
   .landing-section {
@@ -1376,7 +1376,7 @@ dd {
   .section-heading > p {
     margin: 12px 0 0;
     max-width: none;
-    font-size: 10px;
+    font-size: 14px;
   }
   .product-grid {
     grid-template-columns: 1fr;
@@ -1409,7 +1409,7 @@ dd {
     font-size: 26px;
   }
   .promise-section li {
-    font-size: 11px;
+    font-size: 14px;
     padding: 16px 0;
   }
   .promise-flower {
@@ -1444,7 +1444,7 @@ dd {
     font-size: 15px;
   }
   .steps p {
-    font-size: 11px;
+    font-size: 14px;
   }
   .payout-note {
     padding: 20px;
@@ -1457,7 +1457,7 @@ dd {
     font-size: 18px;
   }
   .payout-note p {
-    font-size: 10px;
+    font-size: 14px;
   }
   .rules-section {
     grid-template-columns: 1fr;
@@ -1508,7 +1508,7 @@ dd {
     gap: 18px;
   }
   .signup-form button {
-    font-size: 11px;
+    font-size: 14px;
     padding: 13px;
   }
   .site-footer {
@@ -1537,7 +1537,7 @@ dd {
   .subnav a,
   .tabs a {
     padding: 7px 10px;
-    font-size: 11px;
+    font-size: 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1548,5 +1548,203 @@ dd {
   *:before,
   *:after {
     transition: none !important;
+  }
+}
+
+/* Reading sizes: body 16px, supporting copy and controls at least 14px. */
+.hero-description,
+.product-description,
+.reward-info ul,
+.promise-section li,
+.steps p,
+.signup-intro > p:not(.eyebrow),
+.payout-note p,
+.rules-section details ul,
+.rules-section p,
+input,
+textarea,
+select,
+button,
+.button,
+.hero .button,
+.signup-form input,
+.signup-form button {
+  font-size: 16px;
+}
+label,
+.signup-form label:not(.check),
+.form-checks .check,
+.product-link,
+.text-link,
+.steps h3,
+.payout-note h3 {
+  font-size: 16px;
+}
+.eyebrow,
+.hero .eyebrow,
+.reward-info .eyebrow {
+  font-size: 12px;
+}
+.product-audience {
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.product-card h3 {
+  font-size: 25px;
+  margin-bottom: 6px;
+}
+.product-description {
+  line-height: 1.85;
+}
+.brand-caption,
+.required,
+.optional {
+  font-size: 12px;
+}
+.art-caption {
+  font-size: 11px;
+}
+.art-bottom {
+  font-size: 10px;
+}
+.person-card small {
+  font-size: 12px;
+}
+.intro-message {
+  font-size: 14px;
+}
+.reward-chip {
+  font-size: 12px;
+}
+.hero-copy .actions {
+  gap: 20px;
+}
+.benefit-strip {
+  grid-template-columns: 1fr 1fr 1.4fr;
+}
+.benefit-strip p {
+  padding-inline: 10px;
+}
+.benefit-strip strong {
+  display: block;
+  margin-left: 0;
+}
+.section-heading > p {
+  max-width: 370px;
+}
+.signup-section {
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 40px;
+}
+.signup-form .form-grid {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 900px) {
+  .topbar nav {
+    gap: 18px;
+  }
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .section-heading > p {
+    max-width: none;
+  }
+  .signup-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .promise-section {
+    grid-template-columns: 1fr;
+  }
+  .promise-flower {
+    left: auto;
+    right: 25px;
+  }
+}
+@media (max-width: 640px) {
+  .topbar {
+    padding-inline: 16px;
+  }
+  .topbar nav {
+    gap: 12px;
+  }
+  .topbar .header-cta {
+    font-size: 14px;
+    gap: 0;
+  }
+  .header-cta > span {
+    display: none;
+  }
+  .hero h1 {
+    font-size: clamp(29px, 8.5vw, 36px);
+  }
+  .benefit-strip {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .benefit-strip p {
+    text-align: left;
+    border-right: 0;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+  }
+  .benefit-strip p > span {
+    margin: 0;
+  }
+  .benefit-strip strong {
+    display: inline;
+  }
+  .signup-form {
+    padding: 24px 16px;
+  }
+  .signup-form button {
+    font-size: 15px;
+    gap: 10px;
+  }
+  .connection-art {
+    height: 365px;
+  }
+  .person-you {
+    left: 18px;
+  }
+  .person-friend {
+    right: 18px;
+    top: 257px;
+  }
+  .intro-message {
+    left: 70px;
+    top: 178px;
+    padding: 12px 16px;
+  }
+  .reward-chip {
+    top: 145px;
+    right: 12px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 360px) {
+  .topbar {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .brand-logo {
+    width: 100px;
+  }
+  .brand-caption {
+    font-size: 11px;
+  }
+  .topbar nav {
+    gap: 8px;
+  }
+  .topbar nav > a {
+    white-space: nowrap;
+  }
+  .topbar .header-cta {
+    padding-inline: 9px;
   }
 }

@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { currentPartner } from "@/lib/auth";
 import { listProducts } from "@/lib/queries";
 import { Header } from "@/components/Header";
+import { productOffers, productKitPath } from "@/lib/product-editions";
 
 export const instant = false;
 
@@ -167,9 +168,9 @@ export default async function Home({
             </p>
           </div>
           <div className="product-grid">
-            {products.map((p, i) => (
+            {productOffers(products).map((p, i) => (
               <article
-                key={p.id}
+                key={p.key}
                 className={`product-card ${p.status === "preparing" ? "product-preparing" : ""}`}
               >
                 <div className="product-top">
@@ -184,6 +185,7 @@ export default async function Home({
                   </span>
                 </div>
                 <h3>{p.name}</h3>
+                {p.audience && <p className="product-audience">{p.audience}</p>}
                 <p className="product-description">
                   {p.fit_summary ||
                     (p.status === "preparing"
@@ -203,7 +205,9 @@ export default async function Home({
                 {p.status === "public" ? (
                   <a
                     className="product-link"
-                    href={partner ? "/my/products/" : "#signup"}
+                    href={
+                      partner ? productKitPath(p.slug, p.edition) : "#signup"
+                    }
                   >
                     この製品を紹介する <span aria-hidden="true">↗</span>
                   </a>
@@ -415,7 +419,13 @@ export default async function Home({
       </main>
       <footer className="site-footer">
         <Link href="/" className="footer-brand">
-          <Image src="/images/consilegy-logo.svg" alt="Consilegy" width={155} height={28} className="brand-logo" />
+          <Image
+            src="/images/consilegy-logo.svg"
+            alt="Consilegy"
+            width={155}
+            height={28}
+            className="brand-logo"
+          />
           <span>いいつながりから、次の一歩を。</span>
         </Link>
         <p>© {new Date().getFullYear()} Consilegy</p>
