@@ -231,7 +231,7 @@ insert into public.operators (slug, name) values ('consilegy', 'Consilegy合同�
 
 insert into public.products (operator_id, slug, name, status, destination_url, fit_summary, sort_order)
 select id, 'revenue-crm', 'Revenue CRM', 'public', 'https://consilegy.com/crm/',
-       '入力に手間をかけずに、顧客との関係を部署や担当者の境界で切らずに残したい会社に', 1
+       null, 1
 from public.operators where slug = 'consilegy';
 
 insert into public.products (operator_id, slug, name, status, sort_order)

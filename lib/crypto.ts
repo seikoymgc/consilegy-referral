@@ -19,10 +19,9 @@ export function referralCode(length = 8): string {
 
 function encryptionKey(): Buffer {
   const raw = process.env.DATA_ENCRYPTION_KEY;
-  if (!raw) throw new Error("DATA_ENCRYPTION_KEY（32バイトをbase64にしたもの）を設定してください");
-  const key = Buffer.from(raw, "base64");
-  if (key.length !== 32) throw new Error("DATA_ENCRYPTION_KEY は32バイトである必要があります");
-  return key;
+  if (!raw || raw.length < 32) throw new Error("DATA_ENCRYPTION_KEY（32文字以上のランダムな文字列）を設定してください");
+  // どんな文字列でも、SHA-256で32バイトの鍵にする
+  return createHash("sha256").update(raw, "utf8").digest();
 }
 
 // AES-256-GCM。保存形式は iv.tag.ciphertext（いずれもbase64url）
