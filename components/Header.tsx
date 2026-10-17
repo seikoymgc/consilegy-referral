@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Partner } from "@/lib/auth";
 
@@ -5,7 +6,14 @@ import type { Partner } from "@/lib/auth";
 export function Header({ partner }: { partner: Partner | null }) {
   return (
     <header className="topbar">
-      <Link href="/" className="brand">Consilegy 紹介パートナー</Link>
+      <Link
+        href="/"
+        className="brand"
+        aria-label="Consilegy 紹介パートナー ホーム"
+      >
+        <Image src="/images/consilegy-logo.svg" alt="Consilegy" width={155} height={28} className="brand-logo" />
+        <span className="brand-caption">紹介パートナー</span>
+      </Link>
       <nav>
         {partner ? (
           <>
@@ -13,7 +21,15 @@ export function Header({ partner }: { partner: Partner | null }) {
             {partner.role === "admin" && <Link href="/admin/">管理</Link>}
           </>
         ) : (
-          <Link href="/login/">ログイン</Link>
+          <>
+            <Link href="/#products" className="header-product-link">
+              紹介できる製品
+            </Link>
+            <Link href="/login/">ログイン</Link>
+            <Link href="/#signup" className="button header-cta">
+              パートナー登録 <span aria-hidden="true">↗</span>
+            </Link>
+          </>
         )}
       </nav>
     </header>
@@ -31,7 +47,13 @@ export function MyNav({ current }: { current: string }) {
   return (
     <nav className="subnav">
       {items.map(([href, label]) => (
-        <Link key={href} href={href} aria-current={current === href ? "page" : undefined}>{label}</Link>
+        <Link
+          key={href}
+          href={href}
+          aria-current={current === href ? "page" : undefined}
+        >
+          {label}
+        </Link>
       ))}
     </nav>
   );
@@ -48,13 +70,23 @@ export function AdminNav({ current }: { current: string }) {
   return (
     <nav className="subnav">
       {items.map(([href, label]) => (
-        <Link key={href} href={href} aria-current={current === href ? "page" : undefined}>{label}</Link>
+        <Link
+          key={href}
+          href={href}
+          aria-current={current === href ? "page" : undefined}
+        >
+          {label}
+        </Link>
       ))}
     </nav>
   );
 }
 
-export function Notice({ params }: { params: { error?: string; saved?: string } }) {
+export function Notice({
+  params,
+}: {
+  params: { error?: string; saved?: string };
+}) {
   return (
     <>
       {params.error && <p className="alert error">{params.error}</p>}

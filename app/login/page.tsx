@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "@/components/Header";
 
 export const instant = false;
@@ -28,7 +29,7 @@ export default async function LoginPage({
           </label>
           <button type="submit">ログインリンクを送る</button>
         </form>
-        <p>まだ登録していない方は <a href="/#signup">紹介パートナーに申し込む</a></p>
+        <p>まだ登録していない方は <Link href="/#signup">紹介パートナーに申し込む</Link></p>
       </main>
     </>
   );
