@@ -11,7 +11,13 @@ export function Header({ partner }: { partner: Partner | null }) {
         className="brand"
         aria-label="Consilegy 紹介パートナー ホーム"
       >
-        <Image src="/images/consilegy-logo.svg" alt="Consilegy" width={155} height={28} className="brand-logo" />
+        <Image
+          src="/images/consilegy-logo.svg"
+          alt="Consilegy"
+          width={155}
+          height={28}
+          className="brand-logo"
+        />
         <span className="brand-caption">紹介パートナー</span>
       </Link>
       <nav>
@@ -44,15 +50,24 @@ export function MyNav({ current }: { current: string }) {
     ["/my/rewards/", "報酬・支払い"],
     ["/my/settings/", "登録情報"],
   ];
+  const shortLabels = ["ホーム", "紹介", "案件", "報酬", "設定"];
   return (
-    <nav className="subnav">
-      {items.map(([href, label]) => (
+    <nav className="subnav partner-nav" aria-label="マイページ">
+      {items.map(([href, label], index) => (
         <Link
           key={href}
+          aria-label={label}
           href={href}
           aria-current={current === href ? "page" : undefined}
         >
-          {label}
+          <span className="nav-number" aria-hidden="true">
+            0{index + 1}
+          </span>
+          <span className="nav-label-full">{label}</span>
+          <span className="nav-label-short">{shortLabels[index]}</span>
+          <span className="nav-arrow" aria-hidden="true">
+            ↗
+          </span>
         </Link>
       ))}
     </nav>
@@ -90,7 +105,11 @@ export function Notice({
   return (
     <>
       {params.error && <p className="alert error">{params.error}</p>}
-      {params.saved && <p className="alert ok">{params.saved === "1" ? "保存しました。" : params.saved}</p>}
+      {params.saved && (
+        <p className="alert ok">
+          {params.saved === "1" ? "保存しました。" : params.saved}
+        </p>
+      )}
     </>
   );
 }

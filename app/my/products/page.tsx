@@ -1,7 +1,9 @@
+import { CopyButton } from "@/components/CopyButton";
+import { PartnerShell } from "@/components/PartnerShell";
 import Link from "next/link";
 import { requirePartner } from "@/lib/auth";
 import { getKit, listProducts } from "@/lib/queries";
-import { Header, MyNav } from "@/components/Header";
+
 import {
   productOffers,
   productKitPath,
@@ -29,45 +31,54 @@ export default async function MyProducts({
     : null;
 
   return (
-    <>
-      <Header partner={p} />
-      <main>
-        <MyNav current="/my/products/" />
-        <h1>紹介する</h1>
-
-        <nav className="tabs">
-          {productOffers(products).map((x) =>
-            x.status === "public" ? (
-              <Link
-                key={x.key}
-                href={productKitPath(x.slug, x.edition)}
-                aria-current={
-                  x.slug === selected &&
-                  (!x.edition || x.edition === revenueEdition(edition))
-                    ? "page"
-                    : undefined
-                }
-              >
-                {x.name}
-              </Link>
-            ) : (
-              <span key={x.key} className="muted">
-                {x.name}（準備中）
+    <PartnerShell
+      partner={p}
+      current="/my/products/"
+      title="紹介する"
+      description="紹介先の仕事に合うエディションを選んで、紹介文とリンクを取り出せます。"
+    >
+      <nav className="tabs edition-picker" aria-label="紹介するエディション">
+        {productOffers(products).map((x) =>
+          x.status === "public" ? (
+            <Link
+              key={x.key}
+              href={productKitPath(x.slug, x.edition)}
+              aria-current={
+                x.slug === selected &&
+                (!x.edition || x.edition === revenueEdition(edition))
+                  ? "page"
+                  : undefined
+              }
+            >
+              <span>{x.name}</span>
+              <small>{x.audience || "紹介キット"}</small>
+              <span className="edition-picker-arrow" aria-hidden="true">
+                ↗
               </span>
-            ),
-          )}
-        </nav>
+            </Link>
+          ) : (
+            <span key={x.key} className="muted">
+              {x.name}（準備中）
+            </span>
+          ),
+        )}
+      </nav>
 
-        {!kit ? (
-          <p className="alert error">この製品は今は紹介できません。</p>
-        ) : (
-          <>
+      {!kit ? (
+        <p className="alert error">この製品は今は紹介できません。</p>
+      ) : (
+        <>
+          <div className="kit-selected-heading">
+            <p className="eyebrow">YOUR REFERRAL KIT</p>
             <h2>{kit.product.name}</h2>
-            <section className="card">
+          </div>
+          <div className="kit-content-grid">
+            <section className="card referral-link-card">
               <h2>あなたの紹介リンク</h2>
-              <p>
+              <div className="referral-link-box">
                 <code className="copy">{kit.link}</code>
-              </p>
+                <CopyButton value={kit.link} label="リンクをコピー" />
+              </div>
               <p className="label">
                 このリンクから申し込まれると、30日間あなたの紹介として記録されます。
               </p>
@@ -80,8 +91,14 @@ export default async function MyProducts({
               </section>
             )}
             {kit.forward_message && (
-              <section className="card">
-                <h2>転送用メッセージ</h2>
+              <section className="card message-card">
+                <div className="panel-heading">
+                  <h2>そのまま送れる、紹介メッセージ</h2>
+                  <CopyButton
+                    value={kit.forward_message}
+                    label="紹介文をコピー"
+                  />
+                </div>
                 <p className="pre">{kit.forward_message}</p>
               </section>
             )}
@@ -126,13 +143,16 @@ export default async function MyProducts({
                 </dl>
               </section>
             )}
-            <section className="card">
-              <h2>開示文のひな形（全製品共通）</h2>
+            <section className="card disclosure-card">
+              <p className="eyebrow">FOR A CLEAR INTRODUCTION</p>
+              <h2>紹介料について伝えるときに</h2>
+              <p className="label">開示文のひな形（全製品共通）</p>
               <p className="pre">{DISCLOSURE}</p>
+              <CopyButton value={DISCLOSURE} label="開示文をコピー" />
             </section>
-          </>
-        )}
-      </main>
-    </>
+          </div>
+        </>
+      )}
+    </PartnerShell>
   );
 }
