@@ -21,7 +21,7 @@ export default async function AdminProducts({
     .select("id, product_id, kind, label, rate, period_months, once, excluded_plans, effective_from")
     .eq("operator_id", admin.operator_id).order("effective_from", { ascending: false });
   const { data: kits } = await db().from("product_kits")
-    .select("product_id, tagline, forward_message, fit, materials, screens, faq")
+    .select("product_id, tagline, forward_message, fit, pricing, materials, screens, faq")
     .eq("operator_id", admin.operator_id);
 
   const pairs = (arr: Record<string, string>[] | null, a: string, b: string) =>
@@ -119,6 +119,7 @@ export default async function AdminProducts({
                   <label>一言紹介文（{"{link}"} で紹介リンクが入ります）<textarea name="tagline" rows={3} defaultValue={kit?.tagline ?? ""} /></label>
                   <label>転送用メッセージ（{"{link}"} 可）<textarea name="forward_message" rows={6} defaultValue={kit?.forward_message ?? ""} /></label>
                   <label>合う会社<textarea name="fit" rows={3} defaultValue={kit?.fit ?? ""} /></label>
+                  <label>料金の要点<textarea name="pricing" rows={4} defaultValue={kit?.pricing ?? ""} /></label>
                   <label>資料（1行に「タイトル|URL」）<textarea name="materials" rows={3} defaultValue={pairs(kit?.materials as never, "title", "url")} /></label>
                   <label>画面（1行に「タイトル|URL」）<textarea name="screens" rows={3} defaultValue={pairs(kit?.screens as never, "title", "url")} /></label>
                   <label>質問への答え方（1行に「質問|答え」）<textarea name="faq" rows={5} defaultValue={pairs(kit?.faq as never, "q", "a")} /></label>

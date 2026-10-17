@@ -14,7 +14,7 @@ export default async function AdminPartners({
   const params = await searchParams;
 
   const { data: partners } = await db().from("partners")
-    .select("id, name, company, email, phone, referral_code, status, role, is_professional, invoice_number, bank_last4, created_at")
+    .select("id, name, company, email, phone, referral_code, status, role, is_professional, tax_checked_at, invoice_number, bank_last4, created_at")
     .eq("operator_id", admin.operator_id).order("created_at", { ascending: false });
   const { data: refs } = await db().from("referrals")
     .select("partner_id, products(name)").eq("operator_id", admin.operator_id);
@@ -77,6 +77,15 @@ export default async function AdminPartners({
                         <input type="hidden" name="value" value={p.is_professional ? "false" : "true"} />
                         <button type="submit" className="link small">{p.is_professional ? "士業の印を外す" : "士業の印を付ける"}</button>
                       </form>
+                      {p.is_professional && (p.tax_checked_at ? (
+                        <div className="label">税理士に確認済み（{ymd(p.tax_checked_at)}）</div>
+                      ) : (
+                        <form action="/api/admin/partners/" method="post">
+                          <input type="hidden" name="id" value={p.id} />
+                          <input type="hidden" name="action" value="tax_checked" />
+                          <button type="submit" className="link small">源泉徴収の要否を税理士に確認済みにする</button>
+                        </form>
+                      ))}
                     </td>
                   </tr>
                 );

@@ -256,7 +256,7 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
 
   for (const [partnerId, e] of byPartner) {
     const { data: p } = await db().from("partners")
-      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, status")
+      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, tax_checked_at, status")
       .eq("id", partnerId).single();
     if (!p || p.payout_method === "none") continue; // 受け取らない人は台帳だけ
     if (e.total < MIN_PAYOUT) { counts.carriedOver++; continue; }
@@ -269,10 +269,10 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
       });
       continue;
     }
-    if (p.is_professional) {
+    if (p.is_professional && !p.tax_checked_at) {
       counts.professionalHold++;
       await notifyAdmin("【紹介】士業の紹介者の支払いを保留しました",
-        `${p.name} 様（${e.total}円）。源泉徴収の要否を顧問税理士に確認してから確定してください。`);
+        `${p.name} 様（${e.total}円）。源泉徴収の要否を顧問税理士に確認し、管理画面の「紹介者」で「税理士に確認済み」にしてください。次の締めで支払いの下書きを作ります。`);
       continue;
     }
 

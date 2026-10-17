@@ -42,7 +42,7 @@ export async function getKit(partnerCode: string, productSlug: string) {
     .select("id, slug, name, status").eq("operator_id", op).eq("slug", productSlug).maybeSingle();
   if (!product || product.status !== "public") return null;
   const { data: kit } = await db().from("product_kits")
-    .select("tagline, forward_message, materials, screens, fit, faq").eq("product_id", product.id).maybeSingle();
+    .select("tagline, forward_message, materials, screens, fit, pricing, faq").eq("product_id", product.id).maybeSingle();
   const link = referralLink(partnerCode, product.slug);
   const fill = (s: string | null | undefined) => (s ?? "").replaceAll("{link}", link);
   return {
@@ -51,6 +51,7 @@ export async function getKit(partnerCode: string, productSlug: string) {
     tagline: fill(kit?.tagline),
     forward_message: fill(kit?.forward_message),
     fit: kit?.fit ?? "",
+    pricing: kit?.pricing ?? "",
     materials: (kit?.materials ?? []) as { title: string; url: string }[],
     screens: (kit?.screens ?? []) as { title: string; url: string }[],
     faq: (kit?.faq ?? []) as { q: string; a: string }[],

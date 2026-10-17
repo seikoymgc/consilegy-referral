@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     tagline: b.tagline || null,
     forward_message: b.forward_message || null,
     fit: b.fit || null,
+    pricing: b.pricing || null,
     materials: parsePairs(b.materials, ["title", "url"]),
     screens: parsePairs(b.screens, ["title", "url"]),
     faq: parsePairs(b.faq, ["q", "a"]),

@@ -4,6 +4,7 @@ import { sendMail } from "@/lib/mail";
 import { apiAdmin } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
 import { appUrl } from "@/lib/db";
+import { issueStatement } from "@/lib/statement";
 
 export async function POST(req: Request) {
   const admin = await apiAdmin(req);
@@ -23,15 +24,18 @@ export async function POST(req: Request) {
     const number = `RP-${payout.month.slice(0, 7).replace("-", "")}-${payout.id.slice(0, 8).toUpperCase()}`;
     await db().from("payouts").update({ status: "paid", paid_on: paidOn, statement_number: number }).eq("id", payout.id);
     await db().from("commissions").update({ status: "paid" }).eq("payout_id", payout.id).eq("status", "confirmed");
+    await issueStatement(payout.id); // 支払通知書PDF（7年保存）
 
     const { data: p } = await db().from("partners").select("email, name").eq("id", payout.partner_id).single();
     if (p) {
       await sendMail({
         to: p.email,
         subject: "【Consilegy 紹介パートナー】報酬をお振込みしました",
-        text: `${p.name} 様\n\n${payout.month.slice(0, 7)}分の報酬 ${payout.amount.toLocaleString("ja-JP")}円 をお振込みしました（${paidOn}）。\n明細はマイページの「報酬・支払い」でご確認いただけます。\n${appUrl()}/my/rewards/`,
+        text: `${p.name} 様\n\n${payout.month.slice(0, 7)}分の報酬 ${payout.amount.toLocaleString("ja-JP")}円 をお振込みしました（${paidOn}）。\n支払通知書（PDF）と明細は、マイページの「報酬・支払い」でご確認いただけます。\n${appUrl()}/my/rewards/`,
       });
     }
+  } else if (b.action === "reissue_statement" && payout.status === "paid") {
+    await issueStatement(payout.id);
   } else {
     return respond(req, withParam(back, "error", "この状態ではその操作はできません"), { error: "invalid_state" }, 400);
   }

@@ -43,8 +43,8 @@ export default async function Home({
       <Header partner={partner} />
       <main>
         <section className="hero">
-          <h1>「この人に合いそう」を、一通の転送で。</h1>
-          <p>Consilegyの製品を紹介すると、報酬が受け取れます。製品の知識も営業も要りません。</p>
+          <h1>「あの会社に、教えたい」</h1>
+          <p>Consilegyの製品を紹介すると、報酬が受け取れます。あなたの作業は、紹介文の転送だけです。</p>
           <p className="actions">
             <a href="#signup" className="button">紹介パートナーになる</a>
             <a href="/login/" className="button secondary">ログイン</a>
@@ -105,7 +105,7 @@ export default async function Home({
             <label>電話番号（任意）<input name="phone" type="tel" autoComplete="tel" /></label>
             <label className="check"><input type="checkbox" name="is_professional" /> 弁護士・税理士などの士業です</label>
             <label className="check"><input type="checkbox" name="terms" required /> 紹介の決まりに同意します</label>
-            <label className="check"><input type="checkbox" name="marketing" /> お知らせメールを受け取る</label>
+            <label className="check"><input type="checkbox" name="marketing" defaultChecked /> お知らせメールを受け取る</label>
             <button type="submit">申し込む（ログインリンクが届きます）</button>
           </form>
         </section>

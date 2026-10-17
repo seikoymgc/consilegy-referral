@@ -6,7 +6,7 @@ import { Header, MyNav } from "@/components/Header";
 export const instant = false;
 
 const DISCLOSURE =
-  "※この紹介は、Consilegyの紹介パートナーとして行っています（紹介が成約した場合、私に紹介報酬が支払われます）。";
+  "なお、私はConsilegy合同会社の紹介パートナー制度に登録しており、ご契約に至った場合は同社から紹介料を受け取ります。ご判断の材料としてお伝えしておきます。";
 
 export default async function MyProducts({
   searchParams,
@@ -55,6 +55,7 @@ export default async function MyProducts({
               </section>
             )}
             {kit.fit && <section className="card"><h2>合う会社</h2><p className="pre">{kit.fit}</p></section>}
+            {kit.pricing && <section className="card"><h2>料金の要点</h2><p className="pre">{kit.pricing}</p></section>}
             {(kit.materials.length > 0 || kit.screens.length > 0) && (
               <section className="card">
                 <h2>資料・画面</h2>

@@ -41,10 +41,13 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 2. `.env.example` を見て環境変数を設定（Vercelでは Project Settings → Environment Variables）
 3. 最初の管理者：申込んだあと、SQL Editor で `update partners set role = 'admin' where email = '...';`
 
-## 未実装（設計書の範囲で残っているもの）
+## 支払い
 
-- 支払通知書PDF（`/api/payouts/{id}/statement/` は今は501を返す）
-- 振込用CSVの全銀協形式（当社口座の委託者コードなどが必要。今は項目CSV）
-- Revenue CRM側の通知の実装（別リポジトリ）
-- 今の `/crm/referral/kit/` からの転送（consilegy-astro 側）
-- 祝日を考慮した営業日の計算（今は土日だけ除外）
+- 振込済みにすると、支払通知書PDFを作って Supabase Storage（非公開バケット `statements`）に保存し、紹介者にメールで知らせる。インボイス登録番号のある紹介者の分は仕入明細書の形
+- 全銀データ（総合振込・Shift_JIS・120バイト固定長）は、管理画面「支払い」で振込元の口座（委託者コードなど）を登録すると書き出せる
+- 士業の紹介者は、管理画面「紹介者」で「税理士に確認済み」にするまで支払いの下書きを作らない
+- 営業日は土日・祝日（振替休日を含む）・年末年始（12/31〜1/3）を除いて数える
+
+## マイグレーション
+
+`supabase/migrations/` の 0002 → 0003 の順に SQL Editor で実行する。
