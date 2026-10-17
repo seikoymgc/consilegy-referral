@@ -8,6 +8,12 @@
   --accent: #1e40af;
   --accent-hover: #1d4ed8;
   --accent-soft: #eff6ff;
+  /* Logo red (#e05265), deepened for readable white button labels. */
+  --action: #be354b;
+  --action-hover: #a62b3f;
+  --action-soft: #fff1f3;
+  --action-ring: #e05265;
+  --action-shadow: #be354b24;
   --surface: #f5f5f4;
   --ok-bg: #eaf3e8;
   --ok-fg: #28573a;
@@ -168,7 +174,7 @@ button,
   padding: 13px 23px;
   border: 1px solid transparent;
   border-radius: 7px;
-  background: var(--accent);
+  background: var(--action);
   color: #fff;
   cursor: pointer;
   text-decoration: none;
@@ -182,8 +188,8 @@ button,
 }
 button:hover,
 .button:hover {
-  background: var(--accent-hover);
-  box-shadow: 0 4px 12px #1e40af15;
+  background: var(--action-hover);
+  box-shadow: 0 4px 12px var(--action-shadow);
 }
 button:disabled {
   opacity: 0.5;
@@ -191,14 +197,24 @@ button:disabled {
 }
 button.link {
   background: none;
-  color: var(--accent);
+  color: var(--action);
   padding: 0;
 }
 button.secondary,
 .button.secondary {
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--line);
+  color: var(--action);
+  border: 1px solid #e8b8c1;
+}
+button.secondary:hover,
+.button.secondary:hover {
+  background: var(--action-soft);
+}
+button:focus-visible,
+.button:focus-visible,
+.product-card .product-link:focus-visible,
+.partner-nav.subnav a.nav-primary:focus-visible {
+  outline-color: var(--action-ring);
 }
 button.danger {
   background: #a23f38;
@@ -2381,13 +2397,16 @@ label,
   flex-shrink: 0;
 }
 .workspace-main .copy-button {
-  border-color: #d5deee;
+  border-color: #e8b8c1;
   background: #fff;
-  color: var(--accent);
+  color: var(--action);
   font-size: 14px;
   white-space: nowrap;
   padding: 8px 13px;
   min-height: 38px;
+}
+.workspace-main .copy-button:hover {
+  background: var(--action-soft);
 }
 .copy-feedback {
   color: #a43e36;
@@ -2861,7 +2880,7 @@ label,
 
 /* Make starting a referral the primary action on every screen. */
 .product-card .product-link {
-  background: var(--accent);
+  background: var(--action);
   color: #fff;
   border: 0;
   border-radius: 7px;
@@ -2871,24 +2890,24 @@ label,
   font-weight: 600;
 }
 .product-card .product-link:hover {
-  background: var(--accent-hover);
+  background: var(--action-hover);
 }
 .partner-nav.subnav a.nav-primary {
-  background: var(--accent);
+  background: var(--action);
   color: #fff;
   font-size: 16px;
   font-weight: 600;
   padding: 14px 16px;
   min-height: 52px;
   margin: 6px 0 10px;
-  box-shadow: 0 4px 12px #1e40af24;
+  box-shadow: 0 4px 12px var(--action-shadow);
 }
 .partner-nav.subnav a.nav-primary:hover {
-  background: var(--accent-hover);
+  background: var(--action-hover);
 }
 .partner-nav.subnav a.nav-primary[aria-current="page"] {
-  background: #19358c;
-  box-shadow: inset 0 0 0 2px #93c5fd;
+  background: var(--action-hover);
+  box-shadow: inset 0 0 0 2px #f5a6b3;
 }
 .nav-primary .nav-number {
   display: none;
@@ -2901,7 +2920,7 @@ label,
   font-size: 16px;
   padding: 15px 25px;
   min-height: 56px;
-  box-shadow: 0 4px 12px #1e40af24;
+  box-shadow: 0 4px 12px var(--action-shadow);
 }
 @media (max-width: 760px) {
   .partner-nav.subnav {
