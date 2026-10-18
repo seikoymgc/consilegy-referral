@@ -56,7 +56,7 @@ export default async function MyReferrals({
       title="紹介案件"
       description="紹介先の状況と次の期限を、ひと目で確認できます。"
       action={
-        <Link href="#new-referral" className="button">
+        <Link href="#new-referral" className="button action-primary">
           紹介先を登録する <span aria-hidden="true">＋</span>
         </Link>
       }
@@ -204,7 +204,7 @@ export default async function MyReferrals({
             <input type="checkbox" name="consent" required />{" "}
             紹介先から、Consilegyに連絡先を伝える同意をもらっています
           </label>
-          <button type="submit">登録する</button>
+          <button type="submit" className="action-primary">登録する</button>
         </form>
         <p className="label">
           登録すると、3営業日以内に「受理／既存接点あり／対象外」をお知らせします。

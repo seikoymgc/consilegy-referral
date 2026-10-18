@@ -8,12 +8,12 @@
   --accent: #1e40af;
   --accent-hover: #1d4ed8;
   --accent-soft: #eff6ff;
-  /* Logo red (#e05265), deepened for readable white button labels. */
-  --action: #be354b;
-  --action-hover: #a62b3f;
-  --action-soft: #fff1f3;
-  --action-ring: #e05265;
-  --action-shadow: #be354b24;
+  /* Muted rose drawn from the logo; reserved for referral and signup actions. */
+  --action: #a65468;
+  --action-hover: #93475a;
+  --action-soft: #faf3f5;
+  --action-ring: #bc8190;
+  --action-shadow: #a6546815;
   --surface: #f5f5f4;
   --ok-bg: #eaf3e8;
   --ok-fg: #28573a;
@@ -172,10 +172,10 @@ select:focus {
 button,
 .button {
   padding: 13px 23px;
-  border: 1px solid transparent;
+  border: 1px solid #d6d3d1;
   border-radius: 7px;
-  background: var(--action);
-  color: #fff;
+  background: #fff;
+  color: var(--fg);
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
@@ -188,8 +188,19 @@ button,
 }
 button:hover,
 .button:hover {
+  background: var(--surface);
+  border-color: #a8a29e;
+}
+.button.action-primary,
+button.action-primary {
+  background: var(--action);
+  border-color: var(--action);
+  color: #fff;
+}
+.button.action-primary:hover,
+button.action-primary:hover {
   background: var(--action-hover);
-  box-shadow: 0 4px 12px var(--action-shadow);
+  border-color: var(--action-hover);
 }
 button:disabled {
   opacity: 0.5;
@@ -202,9 +213,9 @@ button.link {
 }
 button.secondary,
 .button.secondary {
-  background: transparent;
-  color: var(--action);
-  border: 1px solid #e8b8c1;
+  background: #fff;
+  color: var(--fg);
+  border: 1px solid #d6d3d1;
 }
 button.secondary:hover,
 .button.secondary:hover {
@@ -217,7 +228,12 @@ button:focus-visible,
   outline-color: var(--action-ring);
 }
 button.danger {
-  background: #a23f38;
+  background: #fff;
+  color: #9c3429;
+  border-color: #d8b8b3;
+}
+button.danger:hover {
+  background: var(--err-bg);
 }
 button.small {
   padding: 5px 12px;
@@ -2397,9 +2413,9 @@ label,
   flex-shrink: 0;
 }
 .workspace-main .copy-button {
-  border-color: #e8b8c1;
+  border-color: #d6d3d1;
   background: #fff;
-  color: var(--action);
+  color: var(--fg);
   font-size: 14px;
   white-space: nowrap;
   padding: 8px 13px;
@@ -2907,7 +2923,7 @@ label,
 }
 .partner-nav.subnav a.nav-primary[aria-current="page"] {
   background: var(--action-hover);
-  box-shadow: inset 0 0 0 2px #f5a6b3;
+  box-shadow: inset 0 0 0 2px #d7a6b3;
 }
 .nav-primary .nav-number {
   display: none;

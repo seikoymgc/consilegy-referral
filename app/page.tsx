@@ -63,7 +63,7 @@ export default async function Home({
               あなたの作業は、紹介文の転送だけです。
             </p>
             <div className="actions">
-              <a href="#signup" className="button">
+              <a href="#signup" className="button action-primary">
                 紹介パートナーになる <span aria-hidden="true">↗</span>
               </a>
               <a href="#how-it-works" className="text-link">
@@ -410,7 +410,7 @@ export default async function Home({
                   お知らせメールを受け取る
                 </label>
               </div>
-              <button type="submit">
+              <button type="submit" className="action-primary">
                 無料でパートナーに申し込む <span aria-hidden="true">↗</span>
               </button>
             </form>

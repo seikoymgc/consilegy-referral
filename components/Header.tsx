@@ -32,7 +32,7 @@ export function Header({ partner }: { partner: Partner | null }) {
               紹介できる製品
             </Link>
             <Link href="/login/">ログイン</Link>
-            <Link href="/#signup" className="button header-cta">
+            <Link href="/#signup" className="button action-primary header-cta">
               パートナー登録 <span aria-hidden="true">↗</span>
             </Link>
           </>
