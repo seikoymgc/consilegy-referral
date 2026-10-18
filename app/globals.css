@@ -8,12 +8,12 @@
   --accent: #1e40af;
   --accent-hover: #1d4ed8;
   --accent-soft: #eff6ff;
-  /* Muted rose drawn from the logo; reserved for referral and signup actions. */
-  --action: #a65468;
-  --action-hover: #93475a;
-  --action-soft: #faf3f5;
-  --action-ring: #bc8190;
-  --action-shadow: #a6546815;
+  /* Exact purple stop from the official Consilegy logo. */
+  --action: #8758c9;
+  --action-hover: #8758c9;
+  --action-soft: #8758c90a;
+  --action-ring: #8758c9;
+  --action-shadow: #8758c915;
   --surface: #f5f5f4;
   --ok-bg: #eaf3e8;
   --ok-fg: #28573a;
@@ -2923,7 +2923,7 @@ label,
 }
 .partner-nav.subnav a.nav-primary[aria-current="page"] {
   background: var(--action-hover);
-  box-shadow: inset 0 0 0 2px #d7a6b3;
+  box-shadow: inset 0 0 0 2px #ffffff80;
 }
 .nav-primary .nav-number {
   display: none;
