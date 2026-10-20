@@ -14,13 +14,23 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 
 | 紹介者向け | 管理用（role=admin のみ） |
 |---|---|
-| `/` 案内・申込 | `/admin/` 概要 |
-| `/login/` ログイン | `/admin/products/` 製品・報酬ルール・紹介キット・通知キー |
+| `/` 案内・申込（英語は `/en/`） | `/admin/` 概要 |
+| `/login/` ログイン（英語は `/en/login/`） | `/admin/products/` 製品・報酬ルール・紹介キット（日本語・英語）・通知キー |
 | `/my/` ホーム | `/admin/partners/` 紹介者 |
 | `/my/products/` 紹介する | `/admin/referrals/` 紹介案件（受理・確定・紐づけ・手入力） |
 | `/my/referrals/` 紹介案件 | `/admin/payouts/` 支払い（承認・振込済み・CSV） |
 | `/my/rewards/` 報酬・支払い | |
 | `/my/settings/` 登録情報 | |
+
+## 言語（日本語・英語）
+
+- 文言は `lib/messages/ja.ts` と `lib/messages/en.ts`（同じ形。型でそろえている）。日付・金額の表示は `lib/i18n.ts`
+- ログイン前の画面は URL で分ける（`/` と `/en/`）。申し込んだページの言語を紹介者（`partners.locale`）に保存する
+- マイページ・メール・支払通知書は紹介者の言語で出す。ヘッダーの切り替えか「登録情報」で変えられる
+- 管理画面は管理者自身の言語。運営への通知メール（`notifyAdmin`）は日本語のまま
+- 製品の英語の文言：`products.fit_summary_en`・`reward_rules.label_en`・`product_kits.content_en`（空なら日本語を出す）
+- 英語の紹介者の紹介リンクには `lang=en` が付き、行き先が consilegy.com/en/ の同じエディションのページになる
+- 紹介の決まりの英語は参考訳。英語の画面に「日本語版が優先」と書いている
 
 紹介リンク：`/r/紹介コード/製品`（`.consilegy.com` 全体で読めるCookie `cns_partner_ref` に30日）
 
@@ -50,4 +60,4 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 
 ## マイグレーション
 
-`supabase/migrations/` の 0002 → 0003 の順に SQL Editor で実行する。
+`supabase/migrations/` の 0002 → 0003 → 0004 の順に SQL Editor で実行する（0004 は英語版。何度実行しても同じ結果）。

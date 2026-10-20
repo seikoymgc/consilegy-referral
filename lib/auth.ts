@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { appUrl, db, operatorId } from "./db";
 import { randomToken, sha256 } from "./crypto";
 import { sendMail } from "./mail";
+import { cookieLocale, localePath, messages, type Locale } from "./i18n";
 
 export const SESSION_COOKIE = "rp_session";
 const TOKEN_TTL_MIN = 15;
@@ -25,10 +26,11 @@ export type Partner = {
   marketing_opt_in: boolean;
   role: "partner" | "admin";
   status: "active" | "suspended" | "withdrawn";
+  locale: Locale;
 };
 
 const PARTNER_COLUMNS =
-  "id, operator_id, email, name, company, phone, referral_code, payout_method, invoice_number, is_professional, bank_last4, marketing_opt_in, role, status";
+  "id, operator_id, email, name, company, phone, referral_code, payout_method, invoice_number, is_professional, bank_last4, marketing_opt_in, role, status, locale";
 
 export async function clientIp(): Promise<string> {
   const h = await headers();
@@ -36,7 +38,8 @@ export async function clientIp(): Promise<string> {
 }
 
 // ログインリンクを送る。上限に達していたら送らない（応答は呼び出し側で常に同じにする）
-export async function sendLoginLink(partnerId: string, email: string, ip: string): Promise<void> {
+// メールは紹介者の言語で送る
+export async function sendLoginLink(partnerId: string, email: string, ip: string, locale: Locale): Promise<void> {
   const op = await operatorId();
   const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
@@ -58,19 +61,13 @@ export async function sendLoginLink(partnerId: string, email: string, ip: string
   });
   if (error) throw new Error(error.message);
 
-  const link = `${appUrl()}/auth/verify?token=${encodeURIComponent(token)}`;
+  const t = messages(locale);
+  const link = `${appUrl()}${localePath(locale, "/auth/verify/")}?token=${encodeURIComponent(token)}`;
   await sendMail({
     to: email,
-    subject: "【Consilegy 紹介パートナー】ログインリンク",
-    text: [
-      "Consilegy 紹介パートナーのログインリンクです。",
-      "下のリンクを開き、「ログインする」ボタンを押してください。",
-      "",
-      link,
-      "",
-      `このリンクの有効期限は${TOKEN_TTL_MIN}分で、1回だけ使えます。`,
-      "お心当たりのない場合は、このメールを破棄してください。",
-    ].join("\n"),
+    locale,
+    subject: t.mail.loginSubject,
+    text: t.mail.loginBody(link, TOKEN_TTL_MIN),
   });
 }
 
@@ -149,7 +146,7 @@ export async function currentPartner(): Promise<Partner | null> {
 
 export async function requirePartner(): Promise<Partner> {
   const p = await currentPartner();
-  if (!p) redirect("/login/");
+  if (!p) redirect(localePath(await cookieLocale(), "/login/"));
   return p;
 }
 

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { apiAdmin } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
 import { settingsComplete, toZenginKana } from "@/lib/zengin";
+import { messages } from "@/lib/i18n";
 
 // 振込元の口座（全銀データ用）
 export async function POST(req: Request) {
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     account_number: digits(b.account_number),
   };
   if (!settingsComplete(s)) {
-    return respond(req, withParam(back, "error", "委託者コード10桁・委託者名（カナ）・銀行番号4桁・支店番号3桁・口座番号7桁を入れてください"), { error: "invalid" }, 400);
+    return respond(req, withParam(back, "error", messages(admin.locale).admin.errors.transferSettings), { error: "invalid" }, 400);
   }
   await db().from("operators").update({ transfer_settings: s }).eq("id", admin.operator_id);
   return respond(req, withParam(back, "saved", "1"), { ok: true });

@@ -6,33 +6,31 @@ import {
 import Link from "next/link";
 import { requirePartner } from "@/lib/auth";
 import { listProducts, listReferrals } from "@/lib/queries";
-import {
-  CONNECTION_LABEL,
-  STATUS_LABEL,
-  addBusinessDays,
-  addMonths,
-  yen,
-  ymd,
-} from "@/lib/referrals";
+import { addBusinessDays, addMonths, displayCompany, yen, ymd } from "@/lib/referrals";
+import { messages, type Locale } from "@/lib/i18n";
 import { Notice } from "@/components/Header";
 
 export const instant = false;
 
-function nextDeadline(r: {
-  status: string;
-  created_at: string;
-  accepted_at: string | null;
-  confirmed_at: string | null;
-  reward_period_end: string | null;
-}) {
+function nextDeadline(
+  r: {
+    status: string;
+    created_at: string;
+    accepted_at: string | null;
+    confirmed_at: string | null;
+    reward_period_end: string | null;
+  },
+  locale: Locale,
+) {
+  const t = messages(locale).referrals;
   if (r.status === "pending")
-    return `受理の結果：${ymd(addBusinessDays(new Date(r.created_at), 3))}まで`;
+    return t.deadlineAccept(ymd(addBusinessDays(new Date(r.created_at), 3), locale));
   if (r.status === "accepted" && r.accepted_at)
-    return `初回商談：${ymd(new Date(new Date(r.accepted_at).getTime() + 90 * 86400000))}まで`;
+    return t.deadlineMeeting(ymd(new Date(new Date(r.accepted_at).getTime() + 90 * 86400000), locale));
   if (r.status === "confirmed" && r.confirmed_at)
-    return `有料契約：${ymd(addMonths(new Date(r.confirmed_at), 12))}まで`;
+    return t.deadlineContract(ymd(addMonths(new Date(r.confirmed_at), 12), locale));
   if (r.status === "paying" && r.reward_period_end)
-    return `報酬期間：${ymd(r.reward_period_end)}まで`;
+    return t.deadlineReward(ymd(r.reward_period_end, locale));
   return "—";
 }
 
@@ -42,6 +40,9 @@ export default async function MyReferrals({
   searchParams: Promise<{ product?: string; error?: string; saved?: string }>;
 }) {
   const p = await requirePartner();
+  const lc = p.locale;
+  const t = messages(lc).referrals;
+  const labels = messages(lc).labels;
   const params = await searchParams;
   const [products, refs] = await Promise.all([
     listProducts(),
@@ -53,22 +54,22 @@ export default async function MyReferrals({
     <PartnerShell
       partner={p}
       current="/my/referrals/"
-      title="紹介案件"
-      description="紹介先の状況と次の期限を、ひと目で確認できます。"
+      title={t.title}
+      description={t.description}
       action={
         <Link href="#new-referral" className="button action-primary">
-          紹介先を登録する <span aria-hidden="true">＋</span>
+          {t.add} <span aria-hidden="true">＋</span>
         </Link>
       }
     >
-      <Notice params={params} />
+      <Notice params={params} locale={lc} />
 
       <nav className="tabs">
         <Link
           href="/my/referrals/"
           aria-current={!params.product ? "page" : undefined}
         >
-          すべて
+          {t.all}
         </Link>
         {products.map((x) => (
           <Link
@@ -83,16 +84,16 @@ export default async function MyReferrals({
 
       <section className="card referral-list-panel">
         <div className="panel-heading">
-          <h2>紹介した案件</h2>
-          <span className="record-count">{refs.length}件</span>
+          <h2>{t.listTitle}</h2>
+          <span className="record-count">{messages(lc).common.count(refs.length)}</span>
         </div>
         {refs.length === 0 ? (
           <EmptyState
-            title="最初の紹介を、ここから。"
-            description="紹介先を登録すると、進捗や報酬がこの一覧に表示されます。"
+            title={t.emptyTitle}
+            description={t.emptyText}
             action={
               <Link href="/my/products/" className="button secondary">
-                紹介キットを見る ↗
+                {t.kitLink}
               </Link>
             }
           />
@@ -101,12 +102,12 @@ export default async function MyReferrals({
             <table>
               <thead>
                 <tr>
-                  <th>製品</th>
-                  <th>会社名</th>
-                  <th>登録日</th>
-                  <th>状況</th>
-                  <th>次の期限</th>
-                  <th>確定した報酬</th>
+                  <th>{t.colProduct}</th>
+                  <th>{t.colCompany}</th>
+                  <th>{t.colDate}</th>
+                  <th>{t.colStatus}</th>
+                  <th>{t.colDeadline}</th>
+                  <th>{t.colReward}</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,19 +115,19 @@ export default async function MyReferrals({
                   <tr key={r.id}>
                     <td>{r.product.name}</td>
                     <td>
-                      {r.company_name}
+                      {displayCompany(r.company_name, lc)}
                       {r.channel === "link" && (
-                        <span className="badge">リンク</span>
+                        <span className="badge">{t.linkBadge}</span>
                       )}
                     </td>
-                    <td>{ymd(r.created_at)}</td>
+                    <td>{ymd(r.created_at, lc)}</td>
                     <td>
                       <StatusBadge status={r.status}>
-                        {STATUS_LABEL[r.status] ?? r.status}
+                        {labels.status[r.status] ?? r.status}
                       </StatusBadge>
                     </td>
-                    <td>{nextDeadline(r)}</td>
-                    <td className="amount-cell">{yen(r.reward_total)}</td>
+                    <td>{nextDeadline(r, lc)}</td>
+                    <td className="amount-cell">{yen(r.reward_total, lc)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -139,22 +140,20 @@ export default async function MyReferrals({
         <div className="panel-heading">
           <div>
             <p className="eyebrow">NEW CONNECTION</p>
-            <h2>紹介先を登録</h2>
+            <h2>{t.newTitle}</h2>
           </div>
           <span className="panel-mark" aria-hidden="true">
             ＋
           </span>
         </div>
-        <p className="panel-description">
-          紹介先の同意を得てから、分かる範囲でご入力ください。
-        </p>
+        <p className="panel-description">{t.newLead}</p>
         <form
           action="/api/referrals/"
           method="post"
           className="stack referral-form"
         >
           <label>
-            製品
+            {t.fieldProduct}
             <select
               name="product"
               required
@@ -168,28 +167,26 @@ export default async function MyReferrals({
             </select>
           </label>
           <label>
-            会社名
+            {t.fieldCompany}
             <input name="company_name" required />
           </label>
           <label>
-            ご担当者のお名前
+            {t.fieldContact}
             <input name="contact_name" />
           </label>
           <label>
-            役職
+            {t.fieldTitle}
             <input name="contact_title" />
           </label>
           <label>
-            連絡先（メールアドレスまたは電話番号）
+            {t.fieldContactInfo}
             <input name="contact_info" />
-            <span className="label">
-              「山口から直接連絡」を選ぶ場合だけ必要です。それ以外は空欄で構いません。
-            </span>
+            <span className="label">{t.fieldContactInfoNote}</span>
           </label>
           <label>
-            つなぎ方
+            {t.fieldConnection}
             <select name="connection_method" defaultValue="introduce">
-              {Object.entries(CONNECTION_LABEL).map(([v, l]) => (
+              {Object.entries(labels.connection).map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
                 </option>
@@ -197,18 +194,15 @@ export default async function MyReferrals({
             </select>
           </label>
           <label>
-            状況メモ
+            {t.fieldNote}
             <textarea name="note" rows={3} />
           </label>
           <label className="check">
-            <input type="checkbox" name="consent" required />{" "}
-            紹介先から、Consilegyに連絡先を伝える同意をもらっています
+            <input type="checkbox" name="consent" required /> {t.consent}
           </label>
-          <button type="submit" className="action-primary">登録する</button>
+          <button type="submit" className="action-primary">{t.submit}</button>
         </form>
-        <p className="label">
-          登録すると、3営業日以内に「受理／既存接点あり／対象外」をお知らせします。
-        </p>
+        <p className="label">{t.afterSubmit}</p>
       </section>
     </PartnerShell>
   );

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { decrypt } from "@/lib/crypto";
 import { apiAdmin } from "@/lib/guard";
 import { withParam } from "@/lib/http";
+import { messages } from "@/lib/i18n";
 import { buildZengin, settingsComplete, type TransferRow, type TransferSettings } from "@/lib/zengin";
 
 // 承認済みの支払いの振込データ（全銀協形式・総合振込）。?date=YYYY-MM-DD で振込指定日
@@ -10,11 +11,12 @@ export async function GET(req: Request) {
   const admin = await apiAdmin(req);
   if (admin instanceof NextResponse) return admin;
   const back = "/admin/payouts/";
+  const e = messages(admin.locale).admin.errors;
 
   const { data: op } = await db().from("operators").select("transfer_settings").eq("id", admin.operator_id).single();
   const settings = (op?.transfer_settings ?? null) as TransferSettings | null;
   if (!settingsComplete(settings)) {
-    return NextResponse.redirect(new URL(withParam(back, "error", "先に「振込元の口座（全銀データ用）」を登録してください"), req.url), 303);
+    return NextResponse.redirect(new URL(withParam(back, "error", e.transferSettingsFirst), req.url), 303);
   }
 
   const { data: payouts } = await db().from("payouts")
@@ -31,7 +33,7 @@ export async function GET(req: Request) {
     });
   }
   if (rows.length === 0) {
-    return NextResponse.redirect(new URL(withParam(back, "error", "承認済みの支払いがありません"), req.url), 303);
+    return NextResponse.redirect(new URL(withParam(back, "error", e.noApproved), req.url), 303);
   }
 
   const dateParam = new URL(req.url).searchParams.get("date");

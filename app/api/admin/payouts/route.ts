@@ -5,17 +5,19 @@ import { apiAdmin } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
 import { appUrl } from "@/lib/db";
 import { issueStatement } from "@/lib/statement";
+import { formatDate, formatMonth, formatYen, messages, toLocale } from "@/lib/i18n";
 
 export async function POST(req: Request) {
   const admin = await apiAdmin(req);
   if (admin instanceof NextResponse) return admin;
   const b = await readBody(req);
   const back = "/admin/payouts/";
+  const e = messages(admin.locale).admin.errors;
 
   const { data: payout } = await db().from("payouts")
     .select("id, partner_id, month, amount, status")
     .eq("id", b.id ?? "").eq("operator_id", admin.operator_id).maybeSingle();
-  if (!payout) return respond(req, withParam(back, "error", "支払いが見つかりません"), { error: "not_found" }, 404);
+  if (!payout) return respond(req, withParam(back, "error", e.payoutNotFound), { error: "not_found" }, 404);
 
   if (b.action === "approve" && payout.status === "draft") {
     await db().from("payouts").update({ status: "approved" }).eq("id", payout.id);
@@ -26,18 +28,28 @@ export async function POST(req: Request) {
     await db().from("commissions").update({ status: "paid" }).eq("payout_id", payout.id).eq("status", "confirmed");
     await issueStatement(payout.id); // 支払通知書PDF（7年保存）
 
-    const { data: p } = await db().from("partners").select("email, name").eq("id", payout.partner_id).single();
+    const { data: p } = await db().from("partners").select("email, name, locale").eq("id", payout.partner_id).single();
     if (p) {
+      // 紹介者の言語で知らせる（日本語は従来どおり「2026-10分」「5,000円」「2026-10-31」の形）
+      const locale = toLocale(p.locale);
+      const t = messages(locale).mail;
       await sendMail({
         to: p.email,
-        subject: "【Consilegy 紹介パートナー】報酬をお振込みしました",
-        text: `${p.name} 様\n\n${payout.month.slice(0, 7)}分の報酬 ${payout.amount.toLocaleString("ja-JP")}円 をお振込みしました（${paidOn}）。\n支払通知書（PDF）と明細は、マイページの「報酬・支払い」でご確認いただけます。\n${appUrl()}/my/rewards/`,
+        locale,
+        subject: t.paidSubject,
+        text: t.paidBody(
+          p.name,
+          locale === "en" ? formatMonth(payout.month, "en") : payout.month.slice(0, 7),
+          formatYen(payout.amount, locale),
+          locale === "en" ? formatDate(`${paidOn}T00:00:00+09:00`, "en") : paidOn,
+          `${appUrl()}/my/rewards/`,
+        ),
       });
     }
   } else if (b.action === "reissue_statement" && payout.status === "paid") {
     await issueStatement(payout.id);
   } else {
-    return respond(req, withParam(back, "error", "この状態ではその操作はできません"), { error: "invalid_state" }, 400);
+    return respond(req, withParam(back, "error", e.invalidState), { error: "invalid_state" }, 400);
   }
   return respond(req, withParam(back, "saved", "1"), { ok: true });
 }

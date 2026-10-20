@@ -3,6 +3,7 @@ import { PartnerShell } from "@/components/PartnerShell";
 import Link from "next/link";
 import { requirePartner } from "@/lib/auth";
 import { getKit, listProducts } from "@/lib/queries";
+import { messages } from "@/lib/i18n";
 
 import {
   productOffers,
@@ -12,33 +13,34 @@ import {
 
 export const instant = false;
 
-const DISCLOSURE =
-  "なお、私はConsilegy合同会社の紹介パートナー制度に登録しており、ご契約に至った場合は同社から紹介料を受け取ります。ご判断の材料としてお伝えしておきます。";
-
 export default async function MyProducts({
   searchParams,
 }: {
   searchParams: Promise<{ product?: string; edition?: string }>;
 }) {
   const p = await requirePartner();
+  const lc = p.locale;
+  const t = messages(lc).products;
+  const c = messages(lc).common;
   const [{ product, edition }, products] = await Promise.all([
     searchParams,
     listProducts(),
   ]);
   const selected = product ?? products.find((x) => x.status === "public")?.slug;
   const kit = selected
-    ? await getKit(p.referral_code, selected, edition)
+    ? await getKit(p.referral_code, selected, edition, lc)
     : null;
+  const copyLabels = { copiedLabel: c.copied, failedLabel: c.copyFailed };
 
   return (
     <PartnerShell
       partner={p}
       current="/my/products/"
-      title="紹介する"
-      description="紹介先の仕事に合うエディションを選んで、紹介文とリンクを取り出せます。"
+      title={t.title}
+      description={t.description}
     >
-      <nav className="tabs edition-picker" aria-label="紹介するエディション">
-        {productOffers(products).map((x) =>
+      <nav className="tabs edition-picker" aria-label={t.pickerAria}>
+        {productOffers(products, lc).map((x) =>
           x.status === "public" ? (
             <Link
               key={x.key}
@@ -51,21 +53,21 @@ export default async function MyProducts({
               }
             >
               <span>{x.name}</span>
-              <small>{x.audience || "紹介キット"}</small>
+              <small>{x.audience || t.kitFallback}</small>
               <span className="edition-picker-arrow" aria-hidden="true">
                 ↗
               </span>
             </Link>
           ) : (
             <span key={x.key} className="muted">
-              {x.name}（準備中）
+              {t.preparing(x.name)}
             </span>
           ),
         )}
       </nav>
 
       {!kit ? (
-        <p className="alert error">この製品は今は紹介できません。</p>
+        <p className="alert error">{t.unavailable}</p>
       ) : (
         <>
           <div className="kit-selected-heading">
@@ -74,51 +76,44 @@ export default async function MyProducts({
           </div>
           <div className="kit-content-grid">
             <section className="card referral-link-card">
-              <h2>あなたの紹介リンク</h2>
+              <h2>{t.linkTitle}</h2>
               <div className="referral-link-box">
                 <code className="copy">{kit.link}</code>
-                <CopyButton value={kit.link} label="リンクをコピー" />
+                <CopyButton value={kit.link} label={t.copyLink} {...copyLabels} />
               </div>
-              <p className="label">
-                このリンクから申し込まれると、30日間あなたの紹介として記録されます。
-              </p>
+              <p className="label">{t.linkNote}</p>
             </section>
 
             {kit.tagline && (
               <section className="card">
-                <h2>一言紹介文</h2>
+                <h2>{t.tagline}</h2>
                 <p className="pre">{kit.tagline}</p>
               </section>
             )}
             {kit.forward_message && (
               <section className="card message-card">
                 <div className="panel-heading">
-                  <h2>そのまま送れる、紹介メッセージ</h2>
-                  <CopyButton
-                    value={kit.forward_message}
-                    label="紹介文をコピー"
-                  />
+                  <h2>{t.message}</h2>
+                  <CopyButton value={kit.forward_message} label={t.copyMessage} {...copyLabels} />
                 </div>
                 <p className="pre">{kit.forward_message}</p>
               </section>
             )}
             {kit.fit && (
               <section className="card">
-                <h2>
-                  {kit.edition === "b2c" ? "合う教室・スクール" : "合う会社"}
-                </h2>
+                <h2>{kit.edition === "b2c" ? t.fitSchool : t.fitCompany}</h2>
                 <p className="pre">{kit.fit}</p>
               </section>
             )}
             {kit.pricing && (
               <section className="card">
-                <h2>料金の要点</h2>
+                <h2>{t.pricing}</h2>
                 <p className="pre">{kit.pricing}</p>
               </section>
             )}
             {(kit.materials.length > 0 || kit.screens.length > 0) && (
               <section className="card">
-                <h2>資料・画面</h2>
+                <h2>{t.materials}</h2>
                 <ul>
                   {[...kit.materials, ...kit.screens].map((m) => (
                     <li key={m.url}>
@@ -132,7 +127,7 @@ export default async function MyProducts({
             )}
             {kit.faq.length > 0 && (
               <section className="card">
-                <h2>質問への答え方</h2>
+                <h2>{t.faq}</h2>
                 <dl>
                   {kit.faq.map((f) => (
                     <div key={f.q}>
@@ -145,10 +140,10 @@ export default async function MyProducts({
             )}
             <section className="card disclosure-card">
               <p className="eyebrow">FOR A CLEAR INTRODUCTION</p>
-              <h2>紹介料について伝えるときに</h2>
-              <p className="label">開示文のひな形（全製品共通）</p>
-              <p className="pre">{DISCLOSURE}</p>
-              <CopyButton value={DISCLOSURE} label="開示文をコピー" />
+              <h2>{t.disclosureTitle}</h2>
+              <p className="label">{t.disclosureLabel}</p>
+              <p className="pre">{t.disclosure}</p>
+              <CopyButton value={t.disclosure} label={t.copyDisclosure} {...copyLabels} />
             </section>
           </div>
         </>

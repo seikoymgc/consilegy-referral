@@ -1,10 +1,11 @@
 import { appUrl, db, operatorId } from "./db";
 import {
-  REVENUE_EDITIONS,
+  editionInfo,
   editionKit,
   revenueEdition,
   type RevenueEdition,
 } from "./product-editions";
+import type { Locale } from "./i18n";
 
 export type ProductCard = {
   id: string;
@@ -12,7 +13,8 @@ export type ProductCard = {
   name: string;
   status: "public" | "preparing";
   fit_summary: string | null;
-  rules: { kind: string; label: string }[];
+  fit_summary_en: string | null;
+  rules: { kind: string; label: string; label_en: string | null }[];
 };
 
 // 公開中・準備中の製品と報酬ルール（準備中はルールを返さない）
@@ -20,7 +22,7 @@ export async function listProducts(): Promise<ProductCard[]> {
   const op = await operatorId();
   const { data: products } = await db()
     .from("products")
-    .select("id, slug, name, status, fit_summary, sort_order")
+    .select("id, slug, name, status, fit_summary, fit_summary_en, sort_order")
     .eq("operator_id", op)
     .in("status", ["public", "preparing"])
     .order("sort_order");
@@ -30,39 +32,70 @@ export async function listProducts(): Promise<ProductCard[]> {
   const { data: rules } = ids.length
     ? await db()
         .from("reward_rules")
-        .select("product_id, kind, label")
+        .select("product_id, kind, label, label_en")
         .in("product_id", ids)
-    : { data: [] as { product_id: string; kind: string; label: string }[] };
+    : { data: [] as { product_id: string; kind: string; label: string; label_en: string | null }[] };
   return (products ?? []).map((p) => ({
     id: p.id,
     slug: p.slug,
     name: p.name,
     status: p.status,
     fit_summary: p.fit_summary,
+    fit_summary_en: p.fit_summary_en,
     rules:
       p.status === "public"
         ? (rules ?? [])
             .filter((r) => r.product_id === p.id)
-            .map((r) => ({ kind: r.kind, label: r.label }))
+            .map((r) => ({ kind: r.kind, label: r.label, label_en: r.label_en }))
         : [],
   }));
 }
 
+// 英語の紹介者のリンクには lang=en を付け、行き先を consilegy.com/en/ のページにする
 export function referralLink(
   code: string,
   productSlug: string,
   edition?: RevenueEdition,
+  locale: Locale = "ja",
 ): string {
-  const link = `${appUrl()}/r/${code}/${productSlug}`;
-  return productSlug === "revenue-crm" && edition
-    ? `${link}?edition=${edition}`
-    : link;
+  const params = new URLSearchParams();
+  if (productSlug === "revenue-crm" && edition) params.set("edition", edition);
+  if (locale === "en") params.set("lang", "en");
+  const qs = params.toString();
+  return `${appUrl()}/r/${code}/${productSlug}${qs ? `?${qs}` : ""}`;
+}
+
+type KitContent = {
+  tagline?: string | null;
+  forward_message?: string | null;
+  fit?: string | null;
+  pricing?: string | null;
+  materials?: { title: string; url: string }[];
+  screens?: { title: string; url: string }[];
+  faq?: { q: string; a: string }[];
+};
+
+// 英語のキットは content_en の項目を使い、空の項目は日本語のキットのまま
+function localizeKit(kit: KitContent | null, en: KitContent | null, locale: Locale): KitContent | null {
+  if (locale !== "en" || !en) return kit;
+  const pick = <T,>(a: T | null | undefined, b: T | null | undefined) =>
+    (Array.isArray(a) ? a.length > 0 : !!a) ? a : b;
+  return {
+    tagline: pick(en.tagline, kit?.tagline),
+    forward_message: pick(en.forward_message, kit?.forward_message),
+    fit: pick(en.fit, kit?.fit),
+    pricing: pick(en.pricing, kit?.pricing),
+    materials: pick(en.materials, kit?.materials) ?? [],
+    screens: pick(en.screens, kit?.screens) ?? [],
+    faq: pick(en.faq, kit?.faq) ?? [],
+  };
 }
 
 export async function getKit(
   partnerCode: string,
   productSlug: string,
   requestedEdition?: string,
+  locale: Locale = "ja",
 ) {
   const op = await operatorId();
   const { data: product } = await db()
@@ -72,16 +105,21 @@ export async function getKit(
     .eq("slug", productSlug)
     .maybeSingle();
   if (!product || product.status !== "public") return null;
-  const { data: kit } = await db()
+  const { data: kitRow } = await db()
     .from("product_kits")
-    .select("tagline, forward_message, materials, screens, fit, pricing, faq")
+    .select("tagline, forward_message, materials, screens, fit, pricing, faq, content_en")
     .eq("product_id", product.id)
     .maybeSingle();
+  const kit = localizeKit(
+    kitRow as KitContent | null,
+    (kitRow?.content_en ?? null) as KitContent | null,
+    locale,
+  );
   const edition =
     product.slug === "revenue-crm"
       ? revenueEdition(requestedEdition)
       : undefined;
-  const link = referralLink(partnerCode, product.slug, edition);
+  const link = referralLink(partnerCode, product.slug, edition, locale);
   const fill = (s: string | null | undefined) =>
     (s ?? "").replaceAll("{link}", link);
   const baseKit = {
@@ -93,7 +131,7 @@ export async function getKit(
     screens: (kit?.screens ?? []) as { title: string; url: string }[],
     faq: (kit?.faq ?? []) as { q: string; a: string }[],
   };
-  const specificKit = edition ? editionKit(edition, link) : undefined;
+  const specificKit = edition ? editionKit(edition, link, locale) : undefined;
   // Keep the operator-managed B2B kit; provide targeted text and materials for
   // the other editions rather than reusing general sales copy.
   const content = specificKit
@@ -109,7 +147,7 @@ export async function getKit(
     : baseKit;
   return {
     product: edition
-      ? { ...product, name: REVENUE_EDITIONS[edition].name }
+      ? { ...product, name: editionInfo(edition, locale).name }
       : product,
     edition,
     link,

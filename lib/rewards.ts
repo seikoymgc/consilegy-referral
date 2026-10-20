@@ -1,7 +1,8 @@
 import { db } from "./db";
-import { addBusinessDays, addMonths, snapshotRules } from "./referrals";
+import { LINK_SIGNUP_COMPANY, addBusinessDays, addMonths, snapshotRules } from "./referrals";
 import { notifyAdmin, sendMail } from "./mail";
 import { appUrl } from "./db";
+import { messages, toLocale } from "./i18n";
 
 type Rule = {
   id: string;
@@ -148,7 +149,7 @@ export async function applySignup(
     operator_id: ev.operator_id,
     partner_id: partner.id,
     product_id: ev.product_id,
-    company_name: ev.company_name ?? "（リンク経由の申込）",
+    company_name: ev.company_name ?? LINK_SIGNUP_COMPANY,
     channel: "link",
     status: "pending",
     product_contract_id: ev.product_contract_id,
@@ -257,16 +258,19 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
 
   for (const [partnerId, e] of byPartner) {
     const { data: p } = await db().from("partners")
-      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, tax_checked_at, status")
+      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, tax_checked_at, status, locale")
       .eq("id", partnerId).single();
     if (!p || p.payout_method === "none") continue; // 受け取らない人は台帳だけ
     if (e.total < MIN_PAYOUT) { counts.carriedOver++; continue; }
     if (!p.bank_encrypted) {
       counts.needBank++;
+      const locale = toLocale(p.locale);
+      const t = messages(locale).mail;
       await sendMail({
         to: p.email,
-        subject: "【Consilegy 紹介パートナー】振込先のご登録のお願い",
-        text: `${p.name} 様\n\nお支払いできる報酬が確定しました。マイページの「登録情報」から振込先をご登録ください。\n${appUrl()}/my/settings/`,
+        locale,
+        subject: t.bankRequestSubject,
+        text: t.bankRequestBody(p.name, `${appUrl()}/my/settings/`),
       });
       continue;
     }
