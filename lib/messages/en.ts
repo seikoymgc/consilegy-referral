@@ -72,8 +72,6 @@ export const en: typeof ja = {
       "If a referred company's contract is cancelled, the reward for the cancelled part is offset against your future rewards.",
       "We both confirm that we have no ties to anti-social forces, and that we will keep confidential any information learned through referrals.",
     ],
-    rulesPrevail:
-      "This English version is provided for convenience. If it differs from the Japanese version (紹介の決まり), the Japanese version prevails.",
     promises: [
       "No product knowledge needed.",
       "No selling or closing needed.",

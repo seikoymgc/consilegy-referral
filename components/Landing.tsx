@@ -7,7 +7,7 @@ import { Header } from "@/components/Header";
 import { productOffers, productKitPath } from "@/lib/product-editions";
 
 // 案内・申込ページ。日本語（/）と英語（/en/）で同じ作り。
-// 紹介の決まりの原文：consilegy-astro/src/pages/crm/referral/index.astro（全製品共通）。英語は参考訳で、日本語が優先
+// 紹介の決まりの原文：consilegy-astro/src/pages/crm/referral/index.astro（全製品共通）
 export function Landing({
   locale,
   partner,
@@ -276,7 +276,6 @@ export function Landing({
               ))}
             </ul>
             <p className="label">{l.rulesAcceptance}</p>
-            {l.rulesPrevail && <p className="rules-prevail">{l.rulesPrevail}</p>}
           </details>
         </section>
 

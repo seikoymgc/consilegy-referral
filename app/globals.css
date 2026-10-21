@@ -2984,11 +2984,6 @@ label,
 .lang-switch-form {
   display: inline-flex;
 }
-.rules-prevail {
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--muted);
-}
 @media (max-width: 640px) {
   .topbar nav > a,
   .topbar .header-cta {

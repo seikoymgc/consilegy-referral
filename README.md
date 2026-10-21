@@ -30,7 +30,6 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 - 管理画面は管理者自身の言語。運営への通知メール（`notifyAdmin`）は日本語のまま
 - 製品の英語の文言：`products.fit_summary_en`・`reward_rules.label_en`・`product_kits.content_en`（空なら日本語を出す）
 - 英語の紹介者の紹介リンクには `lang=en` が付き、行き先が consilegy.com/en/ の同じエディションのページになる
-- 紹介の決まりの英語は参考訳。英語の画面に「日本語版が優先」と書いている
 
 紹介リンク：`/r/紹介コード/製品`（`.consilegy.com` 全体で読めるCookie `cns_partner_ref` に30日）
 
