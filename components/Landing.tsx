@@ -394,7 +394,12 @@ export function Landing({
           <span>{l.footerTagline}</span>
         </Link>
         <p>© {new Date().getFullYear()} Consilegy</p>
-        <a href="#rules">{l.footerRules}</a>
+        <span className="footer-links">
+          <a href={t.common.privacyUrl} target="_blank" rel="noreferrer">
+            {t.common.privacy} ↗
+          </a>
+          <a href="#rules">{l.footerRules}</a>
+        </span>
       </footer>
     </div>
   );

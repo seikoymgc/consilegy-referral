@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { db } from "@/lib/db";
 import { apiAdmin } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
-import { acceptReferral, applyPayment, reprocessHeld } from "@/lib/rewards";
+import { acceptReferral, applyPayment, notifyReferralResult, reprocessHeld } from "@/lib/rewards";
 import { messages } from "@/lib/i18n";
 
 export async function POST(req: Request) {
@@ -20,18 +20,25 @@ export async function POST(req: Request) {
 
   const now = new Date().toISOString();
   switch (b.action) {
+    // 受理待ちから結果が出たときだけ、紹介者にメールで知らせる（二重に送らない）
     case "accept":
       await acceptReferral(ref.id, false);
+      if (ref.status === "pending") await notifyReferralResult(ref.id, "accepted");
       break;
     case "confirm":
-      if (ref.status === "pending") await acceptReferral(ref.id, true);
-      else await db().from("referrals").update({ status: "confirmed", confirmed_at: now, updated_at: now }).eq("id", ref.id);
+      if (ref.status === "pending") {
+        await acceptReferral(ref.id, true);
+        await notifyReferralResult(ref.id, "accepted");
+      } else await db().from("referrals").update({ status: "confirmed", confirmed_at: now, updated_at: now }).eq("id", ref.id);
       await reprocessHeld(ref.product_id, ref.product_contract_id);
       break;
     case "existing_contact":
     case "out_of_scope":
     case "cancelled":
       await db().from("referrals").update({ status: b.action, updated_at: now }).eq("id", ref.id);
+      if (ref.status === "pending" && (b.action === "existing_contact" || b.action === "out_of_scope")) {
+        await notifyReferralResult(ref.id, b.action);
+      }
       break;
     case "link_contract": {
       const contractId = (b.contract_id ?? "").trim();

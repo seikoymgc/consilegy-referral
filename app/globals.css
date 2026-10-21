@@ -3020,3 +3020,18 @@ label,
     display: inline;
   }
 }
+.settings-grid .bank-panel > h2 + .label {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.footer-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.site-footer .footer-links a {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+}

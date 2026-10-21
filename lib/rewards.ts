@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { LINK_SIGNUP_COMPANY, addBusinessDays, addMonths, snapshotRules } from "./referrals";
+import { LINK_SIGNUP_COMPANY, addBusinessDays, addMonths, displayCompany, snapshotRules } from "./referrals";
 import { notifyAdmin, sendMail } from "./mail";
 import { appUrl } from "./db";
 import { messages, toLocale } from "./i18n";
@@ -161,6 +161,32 @@ export async function applySignup(
   return "applied";
 }
 
+// 紹介の確認結果（受理／既存接点あり／対象外）を、紹介者の言語でメールで知らせる。
+// 「3営業日以内にお知らせします」の約束を守るためのもの。送れなくても処理は止めない
+export async function notifyReferralResult(
+  referralId: string,
+  result: "accepted" | "existing_contact" | "out_of_scope",
+): Promise<void> {
+  try {
+    const { data: r } = await db().from("referrals")
+      .select("company_name, partners(email, name, locale, status), products(name)")
+      .eq("id", referralId).single();
+    const partner = r?.partners as unknown as { email: string; name: string; locale: string | null; status: string } | null;
+    const product = (r?.products as unknown as { name: string } | null)?.name ?? "";
+    if (!r || !partner || partner.status !== "active") return;
+    const locale = toLocale(partner.locale);
+    const t = messages(locale).mail;
+    await sendMail({
+      to: partner.email,
+      locale,
+      subject: t.resultSubject(result),
+      text: t.resultBody(partner.name, product, displayCompany(r.company_name, locale), result, `${appUrl()}/my/referrals/`),
+    });
+  } catch (e) {
+    console.error(`[mail] referral result ${referralId} ${result}: ${e}`);
+  }
+}
+
 // 受理：ルールを固定し、保留していた入金を計算し直す
 export async function acceptReferral(referralId: string, alsoConfirm: boolean): Promise<void> {
   const { data: ref } = await db().from("referrals")
@@ -203,6 +229,7 @@ export async function runDaily(now = new Date()): Promise<Record<string, number>
     if (now < deadline) continue;
     if (r.channel === "link") {
       await acceptReferral(r.id, true); // リンク経由は自動で受理・紹介者確定
+      await notifyReferralResult(r.id, "accepted");
       counts.autoAccepted++;
     } else {
       overdue.push(r.company_name);
@@ -258,11 +285,13 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
 
   for (const [partnerId, e] of byPartner) {
     const { data: p } = await db().from("partners")
-      .select("email, name, payout_method, bank_encrypted, invoice_number, is_professional, tax_checked_at, status, locale")
+      .select("email, name, payout_method, paypal_email, bank_encrypted, invoice_number, is_professional, tax_checked_at, status, locale")
       .eq("id", partnerId).single();
     if (!p || p.payout_method === "none") continue; // 受け取らない人は台帳だけ
     if (e.total < MIN_PAYOUT) { counts.carriedOver++; continue; }
-    if (!p.bank_encrypted) {
+    const isPaypal = p.payout_method === "paypal";
+    // 受け取り先がまだない（銀行振込なら口座、PayPalならメールアドレス）
+    if (isPaypal ? !p.paypal_email : !p.bank_encrypted) {
       counts.needBank++;
       const locale = toLocale(p.locale);
       const t = messages(locale).mail;
@@ -287,7 +316,9 @@ export async function runMonthly(now = new Date()): Promise<Record<string, numbe
       month: prevMonth.toISOString().slice(0, 10),
       amount: e.total,
       status: "draft",
-      bank_snapshot_encrypted: p.bank_encrypted,
+      method: isPaypal ? "paypal" : "bank",
+      bank_snapshot_encrypted: isPaypal ? null : p.bank_encrypted,
+      paypal_email_snapshot: isPaypal ? p.paypal_email : null,
       invoice_number_snapshot: p.invoice_number,
     }).select("id").single();
     if (error || !payout) continue; // 紹介者と対象月の組で一意：2回動いても二重にならない

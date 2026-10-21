@@ -45,6 +45,8 @@ export const ja = {
     count: (n: number) => `${n}件`,
     people: (n: number) => `${n}人`,
     none: "—",
+    privacy: "プライバシーポリシー",
+    privacyUrl: "https://consilegy.com/privacy-policy/",
   },
   shell: {
     honorific: (name: string) => `${name} さん`,
@@ -120,10 +122,10 @@ export const ja = {
     step2Title: "合いそうな人に紹介する",
     step2Text: "紹介リンクを送るか、同意を得た紹介先を登録。ご案内や商談は私たちが担当します。",
     step3Title: "報酬を受け取る",
-    step3Text: "紹介先が有料で契約すると、入金ごとに報酬が確定。銀行振込でお支払いします。",
+    step3Text: "紹介先が有料で契約すると、入金ごとに報酬が確定。銀行振込かPayPalでお支払いします。",
     payoutTitle: "報酬は、毎月まとめてお届け。",
     payoutText:
-      "全製品の合計が5,000円以上の月にお支払い（月末締め・翌月末払い）。5,000円未満は翌月以降に繰り越します。振込手数料は当社負担。報酬条件は製品ごとに異なります。",
+      "全製品の合計が5,000円以上の月にお支払い（月末締め・翌月末払い）。5,000円未満は翌月以降に繰り越します。受け取りは日本の銀行振込かPayPal（海外の方も可）で、手数料は当社負担。報酬条件は製品ごとに異なります。",
     rulesTitle: "気持ちよく、つながるために。",
     rulesLead: "申し込みの前に、紹介の決まりをご確認ください。",
     rulesSummary: "紹介の決まり（全製品共通）",
@@ -188,15 +190,15 @@ export const ja = {
     noPayment: "予定はありません",
     nextPaymentText: (month: string) => `${month} 分のお支払いを予定しています。`,
     nextPaymentNone: "確定した報酬が合計5,000円以上の月に、翌月末のお支払いを予定します。",
-    bankLink: "振込先を確認する ↗",
+    bankLink: "受け取り先を確認する ↗",
     statusAria: "紹介の状況",
     statReferrals: "紹介した件数",
     statInProgress: "商談中",
     statPaying: "有料契約中",
     statUnit: "件",
     bankCalloutTitle: "報酬を受け取る準備をしましょう",
-    bankCalloutText: "確定した報酬があります。お支払いに向けて振込先を登録してください。",
-    bankCalloutButton: "振込先を登録する ↗",
+    bankCalloutText: "確定した報酬があります。お支払いに向けて、振込先かPayPalのメールアドレスを登録してください。",
+    bankCalloutButton: "受け取り先を登録する ↗",
     nextStep: "次の一歩",
     firstReferral: "はじめての紹介を送ってみる",
     nextReferral: "次の紹介先に、合いそうな製品を探す",
@@ -252,7 +254,7 @@ export const ja = {
     colDeadline: "次の期限",
     colReward: "確定した報酬",
     linkBadge: "リンク",
-    linkSignup: "（リンク経由の申込）",
+    linkSignup: "リンク経由の申込",
     deadlineAccept: (d: string) => `受理の結果：${d}まで`,
     deadlineMeeting: (d: string) => `初回商談：${d}まで`,
     deadlineContract: (d: string) => `有料契約：${d}まで`,
@@ -314,12 +316,13 @@ export const ja = {
     language: "表示とメールの言語",
     payoutMethod: "報酬の受け取り",
     payoutBank: "銀行振込で受け取る",
+    payoutPaypal: "PayPalで受け取る（海外の方も可）",
     payoutNone: "受け取らない",
     invoice: "インボイス登録番号（お持ちの方。T＋13桁）",
     marketing: "お知らせメールを受け取る",
     save: "保存する",
     code: "あなたの紹介コード：",
-    bankTitle: "振込先",
+    bankTitle: "振込先（銀行振込）",
     bankRegistered: "登録済み：口座番号 下4桁",
     bankNote: "",
     bankCode: "銀行コード（4桁）",
@@ -333,6 +336,12 @@ export const ja = {
     bankChange: "振込先を変更する",
     bankRegister: "振込先を登録する",
     bankSecurity: "振込先は暗号化して保存し、表示は下4桁だけです。変更すると登録メールにお知らせが届きます。",
+    paypalTitle: "PayPal",
+    paypalNote: "PayPalで受け取る場合は、PayPalに登録しているメールアドレスを入れてください。手数料は当社が負担します。",
+    paypalEmail: "PayPalのメールアドレス",
+    paypalRegistered: "登録済み：",
+    paypalSave: "PayPalのメールアドレスを保存する",
+    paypalSecurity: "保存すると、報酬の受け取り方がPayPalになります。変更すると登録メールにお知らせが届きます。",
     account: "アカウントの管理",
     logout: "ログアウト",
     withdrawSummary: "退会の手続きについて",
@@ -381,6 +390,8 @@ export const ja = {
     invoice: "インボイス登録番号は T＋13桁 で入れてください",
     bank: "銀行コード4桁・支店コード3桁・口座番号7桁・口座名義（カナ）を入れてください",
     statementNotPaid: "支払通知書は振込後に発行されます",
+    paypalEmail: "PayPalのメールアドレスを正しく入れてください",
+    paypalRequired: "PayPalで受け取る場合は、先にPayPalのメールアドレスを登録してください",
   },
   mail: {
     footer: [
@@ -401,15 +412,35 @@ export const ja = {
         `このリンクの有効期限は${minutes}分で、1回だけ使えます。`,
         "お心当たりのない場合は、このメールを破棄してください。",
       ].join("\n"),
-    bankRequestSubject: "【Consilegy 紹介パートナー】振込先のご登録のお願い",
+    bankRequestSubject: "【Consilegy 紹介パートナー】受け取り先のご登録のお願い",
     bankRequestBody: (name: string, url: string) =>
-      `${name} 様\n\nお支払いできる報酬が確定しました。マイページの「登録情報」から振込先をご登録ください。\n${url}`,
+      `${name} 様\n\nお支払いできる報酬が確定しました。マイページの「登録情報」から、振込先（日本の銀行口座）かPayPalのメールアドレスをご登録ください。\n${url}`,
     bankChangedSubject: "【Consilegy 紹介パートナー】振込先が変更されました",
     bankChangedBody: (name: string, last4: string) =>
       `${name} 様\n\n振込先が変更されました（口座番号 下4桁：${last4}）。\nお心当たりのない場合は、お問い合わせフォームからご連絡ください。\nhttps://consilegy.com/contact/`,
-    paidSubject: "【Consilegy 紹介パートナー】報酬をお振込みしました",
-    paidBody: (name: string, month: string, amount: string, paidOn: string, url: string) =>
-      `${name} 様\n\n${month}分の報酬 ${amount} をお振込みしました（${paidOn}）。\n支払通知書（PDF）と明細は、マイページの「報酬・支払い」でご確認いただけます。\n${url}`,
+    paypalChangedSubject: "【Consilegy 紹介パートナー】PayPalのメールアドレスが変更されました",
+    paypalChangedBody: (name: string, email: string) =>
+      `${name} 様\n\n報酬を受け取るPayPalのメールアドレスが ${email} に変更されました。\nお心当たりのない場合は、お問い合わせフォームからご連絡ください。\nhttps://consilegy.com/contact/`,
+    paidSubject: "【Consilegy 紹介パートナー】報酬をお支払いしました",
+    paidBody: (name: string, month: string, amount: string, paidOn: string, url: string, paypal = false) =>
+      `${name} 様\n\n${month}分の報酬 ${amount} を${paypal ? "PayPalでお支払い" : "お振込み"}しました（${paidOn}）。\n支払通知書（PDF）と明細は、マイページの「報酬・支払い」でご確認いただけます。\n${url}`,
+    resultSubject: (result: string): string =>
+      result === "accepted"
+        ? "【Consilegy 紹介パートナー】ご紹介を受理しました"
+        : "【Consilegy 紹介パートナー】ご紹介の確認結果",
+    resultBody: (name: string, product: string, company: string, result: string, url: string) =>
+      [
+        `${name} 様`,
+        "",
+        result === "accepted"
+          ? `${product}のご紹介（${company}）を受理しました。ここから先のご案内と商談は当社が行います。\n受理から90日以内に初回の商談（または無料期間の開始）があると、紹介者として確定します。`
+          : result === "existing_contact"
+            ? `${product}のご紹介（${company}）は、当社がすでに接点を持っている会社のため、今回は報酬の対象外となりました。\nご紹介いただき、ありがとうございました。`
+            : `${product}のご紹介（${company}）は、今回は紹介の対象外となりました。\nご紹介いただき、ありがとうございました。`,
+        "",
+        "紹介案件の状況は、マイページの「紹介案件」でご確認いただけます。",
+        url,
+      ].join("\n"),
   },
   statement: {
     docTitle: (no: string) => `支払通知書 ${no}`,
@@ -425,6 +456,7 @@ export const ja = {
     paidOn: "お振込日",
     amount: "お支払額",
     feeNote: "振込手数料は当社が負担しています。源泉徴収はしていません。",
+    feeNotePaypal: "PayPalでお支払いしました。手数料は当社が負担しています。源泉徴収はしていません。",
     breakdown: "内訳（報酬1件ずつ）",
     colDate: "確定日",
     colProduct: "製品",
@@ -586,6 +618,9 @@ export const ja = {
       colPaidOn: "支払日",
       colActions: "操作",
       status: { draft: "下書き", approved: "承認済み", paid: "振込済み" } as Record<string, string>,
+      colMethod: "受け取り方",
+      method: { bank: "銀行振込", paypal: "PayPal" } as Record<string, string>,
+      exportPaypal: "PayPalの支払い一覧をCSVで書き出す",
       approve: "承認",
       markPaid: "振込済みにする",
       statement: (no: string) => `支払通知書 ${no}`,
@@ -603,6 +638,7 @@ export const ja = {
       accountNumber: "口座番号（7桁）",
       save: "保存する",
       csvHeader: "対象月,紹介者,銀行コード,支店コード,口座種別,口座番号,口座名義カナ,金額",
+      csvHeaderPaypal: "対象月,紹介者,PayPalのメールアドレス,金額,通貨",
     },
     closing: (d: Record<string, number>, m: Record<string, number>) =>
       [

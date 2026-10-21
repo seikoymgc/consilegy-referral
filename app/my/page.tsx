@@ -14,7 +14,9 @@ export default async function MyHome() {
   const t = messages(lc).home;
   const count = messages(lc).common.count;
   const needsBank =
-    p.payout_method === "bank" && !p.bank_last4 && s.confirmedTotal > 0;
+    s.confirmedTotal > 0 &&
+    ((p.payout_method === "bank" && !p.bank_last4) ||
+      (p.payout_method === "paypal" && !p.paypal_email));
   return (
     <PartnerShell
       partner={p}

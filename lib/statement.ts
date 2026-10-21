@@ -46,7 +46,7 @@ function paidDate(v: string | null | undefined, locale: Locale) {
 
 export async function buildStatementPdf(payoutId: string): Promise<{ bytes: Uint8Array; path: string }> {
   const { data: payout, error } = await db().from("payouts")
-    .select("id, operator_id, partner_id, month, amount, paid_on, statement_number, invoice_number_snapshot, created_at, partners(name, company, locale), operators(name, company_info)")
+    .select("id, operator_id, partner_id, month, amount, paid_on, statement_number, invoice_number_snapshot, method, created_at, partners(name, company, locale), operators(name, company_info)")
     .eq("id", payoutId).single();
   if (error || !payout) throw new Error("支払いが見つかりません");
 
@@ -72,6 +72,7 @@ export async function buildStatementPdf(payoutId: string): Promise<{ bytes: Uint
 
   const bytes = await renderStatementPdf({
     locale,
+    method: payout.method === "paypal" ? "paypal" : "bank",
     statementNumber: payout.statement_number ?? "",
     partnerName: partner?.name ?? "",
     partnerCompany: partner?.company ?? null,
@@ -93,6 +94,7 @@ function issuerName(name: string, locale: Locale) {
 
 export type StatementData = {
   locale?: Locale;
+  method?: "bank" | "paypal";
   statementNumber: string; partnerName: string; partnerCompany: string | null; invoiceNumber: string;
   issuerName: string; issuerAddress: string; month: string; paidOn: string | null; amount: number;
   items: { date: string; product: string; company: string; kind: string; base: number; rate: string; amount: number }[];
@@ -159,7 +161,7 @@ export async function renderStatementPdf(d: StatementData): Promise<Uint8Array> 
     text(page, v, M + 90, y, strong ? 13 : 10, strong ? f.bold : f.regular);
     y -= strong ? 22 : 16;
   }
-  text(page, t.feeNote, M, y, 8.5);
+  text(page, d.method === "paypal" ? t.feeNotePaypal : t.feeNote, M, y, 8.5);
   y -= 26;
 
   // 内訳

@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
   const { data: payouts } = await db().from("payouts")
     .select("id, amount, bank_snapshot_encrypted")
-    .eq("operator_id", admin.operator_id).eq("status", "approved").order("month");
+    .eq("operator_id", admin.operator_id).eq("status", "approved").eq("method", "bank").order("month");
   const rows: TransferRow[] = [];
   for (const p of payouts ?? []) {
     if (!p.bank_snapshot_encrypted) continue;

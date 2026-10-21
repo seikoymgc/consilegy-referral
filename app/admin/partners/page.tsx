@@ -19,7 +19,7 @@ export default async function AdminPartners({
   const params = await searchParams;
 
   const { data: partners } = await db().from("partners")
-    .select("id, name, company, email, phone, referral_code, status, role, is_professional, tax_checked_at, invoice_number, bank_last4, locale, created_at")
+    .select("id, name, company, email, phone, referral_code, status, role, is_professional, tax_checked_at, invoice_number, bank_last4, payout_method, paypal_email, locale, created_at")
     .eq("operator_id", admin.operator_id).order("created_at", { ascending: false });
   const { data: refs } = await db().from("referrals")
     .select("partner_id, products(name)").eq("operator_id", admin.operator_id);
@@ -57,7 +57,13 @@ export default async function AdminPartners({
                   <td>{Array.from(byProduct.entries()).map(([n, c]) => `${n} ${count(c)}`).join(" / ") || "—"}</td>
                   <td>{yen(owed, lc)}</td>
                   <td>{p.invoice_number ?? "—"}</td>
-                  <td>{p.bank_last4 ? `****${p.bank_last4}` : t.notRegistered}</td>
+                  <td>
+                    {p.payout_method === "paypal"
+                      ? `PayPal ${p.paypal_email ?? t.notRegistered}`
+                      : p.payout_method === "none"
+                        ? "—"
+                        : p.bank_last4 ? `****${p.bank_last4}` : t.notRegistered}
+                  </td>
                   <td>{languages[p.locale] ?? p.locale}</td>
                   <td>{p.status === "active" ? t.active : p.status === "suspended" ? t.suspended : t.withdrawn}</td>
                   <td>

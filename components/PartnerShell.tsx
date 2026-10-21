@@ -60,7 +60,12 @@ export function PartnerShell({
           {children}
           <footer className="workspace-footer">
             <span>{t.brand.service}</span>
-            <Link href={`${localePath(partner.locale, "/")}#rules`}>{t.shell.footerRules}</Link>
+            <span className="footer-links">
+              <a href={t.common.privacyUrl} target="_blank" rel="noreferrer">
+                {t.common.privacy} ↗
+              </a>
+              <Link href={`${localePath(partner.locale, "/")}#rules`}>{t.shell.footerRules}</Link>
+            </span>
           </footer>
         </main>
       </div>

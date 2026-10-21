@@ -19,7 +19,7 @@ export default async function AdminPayouts({
   const { data: op } = await db().from("operators").select("transfer_settings").eq("id", admin.operator_id).single();
   const ts = (op?.transfer_settings ?? {}) as TransferSettings;
   const { data: payouts } = await db().from("payouts")
-    .select("id, month, amount, status, paid_on, statement_number, invoice_number_snapshot, partners(name, bank_last4)")
+    .select("id, month, amount, status, paid_on, statement_number, invoice_number_snapshot, method, paypal_email_snapshot, partners(name, bank_last4)")
     .eq("operator_id", admin.operator_id)
     .order("month", { ascending: false });
 
@@ -31,6 +31,7 @@ export default async function AdminPayouts({
         <label>{t.transferDate} <input type="date" name="date" required /></label>
         <button type="submit">{t.exportZengin}</button>
         <a className="button secondary" href="/api/admin/payouts/csv/">{t.exportCsv}</a>
+        <a className="button secondary" href="/api/admin/payouts/csv/?method=paypal">{t.exportPaypal}</a>
       </form>
       <form action="/api/admin/closing/" method="post">
         <button type="submit" className="secondary small">{t.runClosing}</button>
@@ -40,7 +41,7 @@ export default async function AdminPayouts({
 
       <div className="scroll">
         <table>
-          <thead><tr><th>{t.colMonth}</th><th>{t.colPartner}</th><th>{t.colAccount}</th><th>{t.colAmount}</th><th>{t.colInvoice}</th><th>{t.colStatus}</th><th>{t.colPaidOn}</th><th>{t.colActions}</th></tr></thead>
+          <thead><tr><th>{t.colMonth}</th><th>{t.colPartner}</th><th>{t.colMethod}</th><th>{t.colAccount}</th><th>{t.colAmount}</th><th>{t.colInvoice}</th><th>{t.colStatus}</th><th>{t.colPaidOn}</th><th>{t.colActions}</th></tr></thead>
           <tbody>
             {(payouts ?? []).map((p) => {
               const partner = p.partners as unknown as { name: string; bank_last4: string | null } | null;
@@ -48,7 +49,8 @@ export default async function AdminPayouts({
                 <tr key={p.id}>
                   <td>{formatMonth(p.month, lc)}</td>
                   <td>{partner?.name}</td>
-                  <td>{partner?.bank_last4 ? `****${partner.bank_last4}` : "—"}</td>
+                  <td>{t.method[p.method] ?? p.method}</td>
+                  <td>{p.method === "paypal" ? (p.paypal_email_snapshot ?? "—") : partner?.bank_last4 ? `****${partner.bank_last4}` : "—"}</td>
                   <td>{yen(p.amount, lc)}</td>
                   <td>{p.invoice_number_snapshot ?? "—"}</td>
                   <td>{t.status[p.status]}</td>

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const e = messages(admin.locale).admin.errors;
 
   const { data: payout } = await db().from("payouts")
-    .select("id, partner_id, month, amount, status")
+    .select("id, partner_id, month, amount, status, method")
     .eq("id", b.id ?? "").eq("operator_id", admin.operator_id).maybeSingle();
   if (!payout) return respond(req, withParam(back, "error", e.payoutNotFound), { error: "not_found" }, 404);
 
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
           formatYen(payout.amount, locale),
           locale === "en" ? formatDate(`${paidOn}T00:00:00+09:00`, "en") : paidOn,
           `${appUrl()}/my/rewards/`,
+          payout.method === "paypal",
         ),
       });
     }

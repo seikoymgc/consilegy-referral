@@ -19,12 +19,17 @@ async function update(req: Request, b: Record<string, string>) {
     return respond(req, withParam("/my/settings/", "error", messages(p.locale).errors.invoice),
       { error: "invalid_invoice_number" }, 400);
   }
+  const method = b.payout_method === "none" ? "none" : b.payout_method === "paypal" ? "paypal" : "bank";
+  if (method === "paypal" && !p.paypal_email) {
+    return respond(req, withParam("/my/settings/", "error", messages(p.locale).errors.paypalRequired),
+      { error: "paypal_email_required" }, 400);
+  }
   const { error } = await db().from("partners").update({
     name: b.name || p.name,
     company: b.company || null,
     phone: b.phone || null,
     invoice_number: invoice || null,
-    payout_method: b.payout_method === "none" ? "none" : "bank",
+    payout_method: method,
     marketing_opt_in: b.marketing === "on" || b.marketing === "true",
     locale: b.locale ? toLocale(b.locale) : p.locale, // 表示とメールの言語
   }).eq("id", p.id);

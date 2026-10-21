@@ -19,7 +19,8 @@ export type Partner = {
   company: string | null;
   phone: string | null;
   referral_code: string;
-  payout_method: "bank" | "none";
+  payout_method: "bank" | "paypal" | "none";
+  paypal_email: string | null;
   invoice_number: string | null;
   is_professional: boolean;
   bank_last4: string | null;
@@ -30,7 +31,7 @@ export type Partner = {
 };
 
 const PARTNER_COLUMNS =
-  "id, operator_id, email, name, company, phone, referral_code, payout_method, invoice_number, is_professional, bank_last4, marketing_opt_in, role, status, locale";
+  "id, operator_id, email, name, company, phone, referral_code, payout_method, paypal_email, invoice_number, is_professional, bank_last4, marketing_opt_in, role, status, locale";
 
 export async function clientIp(): Promise<string> {
   const h = await headers();

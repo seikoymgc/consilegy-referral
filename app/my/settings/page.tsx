@@ -57,6 +57,7 @@ export default async function MySettings({
               {t.payoutMethod}
               <select name="payout_method" defaultValue={p.payout_method}>
                 <option value="bank">{t.payoutBank}</option>
+                <option value="paypal">{t.payoutPaypal}</option>
                 <option value="none">{t.payoutNone}</option>
               </select>
             </label>
@@ -137,6 +138,36 @@ export default async function MySettings({
             </button>
           </form>
           <p className="label">{t.bankSecurity}</p>
+          <p className="label">
+            <a href={messages(lc).common.privacyUrl} target="_blank" rel="noreferrer">
+              {messages(lc).common.privacy} ↗
+            </a>
+          </p>
+        </section>
+
+        <section id="paypal" className="card bank-panel">
+          <p className="eyebrow">PAYPAL</p>
+          <h2>{t.paypalTitle}</h2>
+          <p className="label">{t.paypalNote}</p>
+          {p.paypal_email && (
+            <p>
+              {t.paypalRegistered}<strong>{p.paypal_email}</strong>
+            </p>
+          )}
+          <form action="/api/me/paypal/" method="post" className="stack">
+            <label>
+              {t.paypalEmail}
+              <input
+                name="paypal_email"
+                type="email"
+                required
+                autoComplete="email"
+                defaultValue={p.paypal_email ?? ""}
+              />
+            </label>
+            <button type="submit">{t.paypalSave}</button>
+          </form>
+          <p className="label">{t.paypalSecurity}</p>
         </section>
 
         <section className="card account-panel">
