@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Partner } from "@/lib/auth";
+import { localePath, messages } from "@/lib/i18n";
 import { Header, MyNav } from "./Header";
 
 export function PartnerShell({
@@ -18,9 +19,10 @@ export function PartnerShell({
   action?: ReactNode;
   children: ReactNode;
 }) {
+  const t = messages(partner.locale);
   return (
-    <div className="partner-app">
-      <Header partner={partner} />
+    <div className="partner-app" lang={partner.locale}>
+      <Header partner={partner} locale={partner.locale} back={current} />
       <div className="partner-shell">
         <aside className="partner-sidebar">
           <div className="sidebar-identity">
@@ -28,21 +30,21 @@ export function PartnerShell({
               {partner.name.slice(0, 1)}
             </span>
             <div>
-              <strong>{partner.name} さん</strong>
-              <span>紹介パートナー</span>
+              <strong>{t.shell.honorific(partner.name)}</strong>
+              <span>{t.shell.role}</span>
             </div>
           </div>
           <p className="sidebar-label">WORKSPACE</p>
-          <MyNav current={current} />
+          <MyNav current={current} locale={partner.locale} />
           <div className="sidebar-help">
             <span aria-hidden="true">↗</span>
-            <strong>いいつながりを、次の一歩に。</strong>
-            <p>紹介文や資料は「紹介する」から、いつでも取り出せます。</p>
-            <Link href="/my/products/">紹介キットを見る →</Link>
+            <strong>{t.shell.helpTitle}</strong>
+            <p>{t.shell.helpText}</p>
+            <Link href="/my/products/">{t.shell.helpLink}</Link>
           </div>
           <form action="/api/logout/" method="post" className="sidebar-logout">
             <button type="submit" className="link">
-              ログアウト <span aria-hidden="true">↗</span>
+              {t.shell.logout} <span aria-hidden="true">↗</span>
             </button>
           </form>
         </aside>
@@ -57,8 +59,13 @@ export function PartnerShell({
           </div>
           {children}
           <footer className="workspace-footer">
-            <span>Consilegy 紹介パートナー</span>
-            <Link href="/#rules">紹介の決まり ↗</Link>
+            <span>{t.brand.service}</span>
+            <span className="footer-links">
+              <a href={t.common.privacyUrl} target="_blank" rel="noreferrer">
+                {t.common.privacy} ↗
+              </a>
+              <Link href={`${localePath(partner.locale, "/")}#rules`}>{t.shell.footerRules}</Link>
+            </span>
           </footer>
         </main>
       </div>

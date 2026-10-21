@@ -1,39 +1,9 @@
 import holidayJp from "@holiday-jp/holiday_jp";
 const HOLIDAYS: Record<string, unknown> = holidayJp.holidays;
 import { db } from "./db";
+import { formatDate, formatYen, messages, type Locale } from "./i18n";
 
-// つなぎ方（consilegy.com の紹介キットのフォームと同じ選択肢）
-export const CONNECTION_LABEL: Record<string, string> = {
-  introduce: "私からメール・チャットでつなぐ",
-  meet: "三者で会う・オンラインで話す",
-  contact_ok: "山口から直接連絡してよいと、紹介先の了承を得ている",
-};
-
-export const STATUS_LABEL: Record<string, string> = {
-  pending: "受理待ち",
-  accepted: "受理",
-  existing_contact: "既存接点あり",
-  out_of_scope: "対象外",
-  confirmed: "紹介者確定",
-  paying: "有料契約中",
-  ended: "報酬期間終了",
-  expired: "失効",
-  cancelled: "解約",
-};
-
-export const COMMISSION_STATUS_LABEL: Record<string, string> = {
-  held: "保留",
-  confirmed: "確定",
-  paid: "支払済み",
-  cancelled: "取消",
-  offset: "相殺",
-};
-
-export const KIND_LABEL: Record<string, string> = {
-  monthly_rate: "月額",
-  service_rate: "導入支援",
-  fixed: "定額",
-};
+// 状態・種類・つなぎ方の表示名は lib/messages（日本語・英語）にある
 
 // 営業日（土日を除く）を足す。祝日は考慮していない（管理画面の期限表示は目安）
 // 営業日：土日・祝日（振替休日を含む）・年末年始（12/31〜1/3）を除く。日付は日本時間で数える。
@@ -63,14 +33,20 @@ export function addMonths(date: Date, months: number): Date {
   return d;
 }
 
-export function yen(n: number): string {
-  return `${Math.trunc(n).toLocaleString("ja-JP")}円`;
+// リンク経由の申込で会社名が分からないときに入れる名前（データベースには日本語で入る）
+export const LINK_SIGNUP_COMPANY = "（リンク経由の申込）";
+
+export function displayCompany(name: string, locale: Locale = "ja"): string {
+  return name === LINK_SIGNUP_COMPANY ? messages(locale).referrals.linkSignup : name;
 }
 
-export function ymd(d: Date | string | null | undefined): string {
-  if (!d) return "—";
-  const x = typeof d === "string" ? new Date(d) : d;
-  return x.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" });
+// 金額・日付の表示（言語ごと）。中身は lib/i18n
+export function yen(n: number, locale: Locale = "ja"): string {
+  return formatYen(n, locale);
+}
+
+export function ymd(d: Date | string | null | undefined, locale: Locale = "ja"): string {
+  return formatDate(d, locale);
 }
 
 // 受理時点の報酬ルールを固定するためのスナップショット

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requirePartner } from "@/lib/auth";
 import { getSummary } from "@/lib/queries";
+import { formatMonth, messages } from "@/lib/i18n";
 import { yen, ymd } from "@/lib/referrals";
 import { EmptyState, PartnerShell } from "@/components/PartnerShell";
 
@@ -9,61 +10,64 @@ export const instant = false;
 export default async function MyHome() {
   const p = await requirePartner();
   const s = await getSummary(p.id);
+  const lc = p.locale;
+  const t = messages(lc).home;
+  const count = messages(lc).common.count;
   const needsBank =
-    p.payout_method === "bank" && !p.bank_last4 && s.confirmedTotal > 0;
+    s.confirmedTotal > 0 &&
+    ((p.payout_method === "bank" && !p.bank_last4) ||
+      (p.payout_method === "paypal" && !p.paypal_email));
   return (
     <PartnerShell
       partner={p}
       current="/my/"
-      title={`${p.name} さん、こんにちは。`}
-      description="紹介の状況と、つながりから生まれた成果を確認できます。"
+      title={t.greeting(p.name)}
+      description={t.description}
       action={
         <Link href="/my/products/" className="button action-primary primary-referral-button">
-          製品を紹介する <span aria-hidden="true">↗</span>
+          {t.refer} <span aria-hidden="true">↗</span>
         </Link>
       }
     >
-      <section className="dashboard-overview" aria-label="報酬の概要">
+      <section className="dashboard-overview" aria-label={t.overviewAria}>
         <div className="earnings-card">
           <p className="eyebrow">YOUR CONNECTIONS, YOUR REWARDS</p>
-          <p className="metric-label">累計の確定報酬</p>
-          <p className="earnings-value">{yen(s.confirmedTotal)}</p>
+          <p className="metric-label">{t.totalLabel}</p>
+          <p className="earnings-value">{yen(s.confirmedTotal, lc)}</p>
           <div className="earnings-bottom">
             <span>
-              繰り越し中 <strong>{yen(s.carryOver)}</strong>
+              {t.carryOver} <strong>{yen(s.carryOver, lc)}</strong>
             </span>
-            <Link href="/my/rewards/">報酬の内訳を見る ↗</Link>
+            <Link href="/my/rewards/">{t.rewardsLink}</Link>
           </div>
         </div>
         <div className="next-payment-card">
           <p className="eyebrow">NEXT PAYMENT</p>
-          <h2>次回のお支払い</h2>
+          <h2>{t.nextPayment}</h2>
           <p className="payment-amount">
-            {s.nextPayout ? yen(s.nextPayout.amount) : "予定はありません"}
+            {s.nextPayout ? yen(s.nextPayout.amount, lc) : t.noPayment}
           </p>
           <p>
             {s.nextPayout
-              ? `${s.nextPayout.month.slice(0, 7)} 分のお支払いを予定しています。`
-              : "確定した報酬が合計5,000円以上の月に、翌月末のお支払いを予定します。"}
+              ? t.nextPaymentText(formatMonth(s.nextPayout.month, lc))
+              : t.nextPaymentNone}
           </p>
-          <Link href="/my/settings/">振込先を確認する ↗</Link>
+          <Link href="/my/settings/">{t.bankLink}</Link>
         </div>
       </section>
-      <section className="workspace-metrics" aria-label="紹介の状況">
-        <Stat label="紹介した件数" value={s.referralCount} unit="件" />
-        <Stat label="商談中" value={s.inProgress} unit="件" />
-        <Stat label="有料契約中" value={s.paying} unit="件" />
+      <section className="workspace-metrics" aria-label={t.statusAria}>
+        <Stat label={t.statReferrals} value={s.referralCount} unit={t.statUnit} />
+        <Stat label={t.statInProgress} value={s.inProgress} unit={t.statUnit} />
+        <Stat label={t.statPaying} value={s.paying} unit={t.statUnit} />
       </section>
       {needsBank && (
         <div className="workspace-callout">
           <div>
-            <strong>報酬を受け取る準備をしましょう</strong>
-            <p>
-              確定した報酬があります。お支払いに向けて振込先を登録してください。
-            </p>
+            <strong>{t.bankCalloutTitle}</strong>
+            <p>{t.bankCalloutText}</p>
           </div>
           <Link href="/my/settings/#bank" className="button">
-            振込先を登録する ↗
+            {t.bankCalloutButton}
           </Link>
         </div>
       )}
@@ -72,7 +76,7 @@ export default async function MyHome() {
           <div className="panel-heading">
             <div>
               <p className="eyebrow">NEXT STEP</p>
-              <h2>次の一歩</h2>
+              <h2>{t.nextStep}</h2>
             </div>
             <span className="panel-mark" aria-hidden="true">
               ↗
@@ -82,22 +86,16 @@ export default async function MyHome() {
             <Link href="/my/products/">
               <span className="action-number">01</span>
               <div>
-                <strong>
-                  {s.referralCount === 0
-                    ? "はじめての紹介を送ってみる"
-                    : "次の紹介先に、合いそうな製品を探す"}
-                </strong>
-                <p>
-                  4つのエディションから選んで、紹介文やリンクを取り出せます。
-                </p>
+                <strong>{s.referralCount === 0 ? t.firstReferral : t.nextReferral}</strong>
+                <p>{t.editionsHint}</p>
               </div>
               <span aria-hidden="true">↗</span>
             </Link>
             <Link href="/my/referrals/">
               <span className="action-number">02</span>
               <div>
-                <strong>紹介案件の進み具合を確認する</strong>
-                <p>受理から商談、契約までの状況を確認できます。</p>
+                <strong>{t.checkReferrals}</strong>
+                <p>{t.checkReferralsHint}</p>
               </div>
               <span aria-hidden="true">↗</span>
             </Link>
@@ -107,16 +105,16 @@ export default async function MyHome() {
           <div className="panel-heading">
             <div>
               <p className="eyebrow">BY PRODUCT</p>
-              <h2>製品ごとの内訳</h2>
+              <h2>{t.byProduct}</h2>
             </div>
           </div>
           {s.byProduct.length === 0 ? (
             <EmptyState
-              title="最初のつながりを、ここから。"
-              description="紹介した案件と確定した報酬が、ここに表示されます。"
+              title={t.emptyTitle}
+              description={t.emptyText}
               action={
                 <Link href="/my/products/" className="text-link">
-                  紹介キットを見る ↗
+                  {t.kitLink}
                 </Link>
               }
             />
@@ -125,17 +123,17 @@ export default async function MyHome() {
               <table>
                 <thead>
                   <tr>
-                    <th>製品</th>
-                    <th>紹介件数</th>
-                    <th>確定報酬</th>
+                    <th>{t.colProduct}</th>
+                    <th>{t.colCount}</th>
+                    <th>{t.colReward}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {s.byProduct.map((b) => (
                     <tr key={b.slug}>
                       <td>{b.name}</td>
-                      <td>{b.count}件</td>
-                      <td className="amount-cell">{yen(b.reward)}</td>
+                      <td>{count(b.count)}</td>
+                      <td className="amount-cell">{yen(b.reward, lc)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -144,7 +142,7 @@ export default async function MyHome() {
           )}
         </section>
       </div>
-      <p className="workspace-updated">最終更新：{ymd(new Date())}</p>
+      <p className="workspace-updated">{t.updated(ymd(new Date(), lc))}</p>
     </PartnerShell>
   );
 }
@@ -162,7 +160,7 @@ function Stat({
       <p>{label}</p>
       <strong>
         {value}
-        <span>{unit}</span>
+        {unit && <span>{unit}</span>}
       </strong>
     </div>
   );

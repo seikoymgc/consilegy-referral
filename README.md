@@ -14,13 +14,22 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 
 | 紹介者向け | 管理用（role=admin のみ） |
 |---|---|
-| `/` 案内・申込 | `/admin/` 概要 |
-| `/login/` ログイン | `/admin/products/` 製品・報酬ルール・紹介キット・通知キー |
+| `/` 案内・申込（英語は `/en/`） | `/admin/` 概要 |
+| `/login/` ログイン（英語は `/en/login/`） | `/admin/products/` 製品・報酬ルール・紹介キット（日本語・英語）・通知キー |
 | `/my/` ホーム | `/admin/partners/` 紹介者 |
 | `/my/products/` 紹介する | `/admin/referrals/` 紹介案件（受理・確定・紐づけ・手入力） |
 | `/my/referrals/` 紹介案件 | `/admin/payouts/` 支払い（承認・振込済み・CSV） |
 | `/my/rewards/` 報酬・支払い | |
 | `/my/settings/` 登録情報 | |
+
+## 言語（日本語・英語）
+
+- 文言は `lib/messages/ja.ts` と `lib/messages/en.ts`（同じ形。型でそろえている）。日付・金額の表示は `lib/i18n.ts`
+- ログイン前の画面は URL で分ける（`/` と `/en/`）。申し込んだページの言語を紹介者（`partners.locale`）に保存する
+- マイページ・メール・支払通知書は紹介者の言語で出す。ヘッダーの切り替えか「登録情報」で変えられる
+- 管理画面は管理者自身の言語。運営への通知メール（`notifyAdmin`）は日本語のまま
+- 製品の英語の文言：`products.fit_summary_en`・`reward_rules.label_en`・`product_kits.content_en`（空なら日本語を出す）
+- 英語の紹介者の紹介リンクには `lang=en` が付き、行き先が consilegy.com/en/ の同じエディションのページになる
 
 紹介リンク：`/r/紹介コード/製品`（`.consilegy.com` 全体で読めるCookie `cns_partner_ref` に30日）
 
@@ -43,6 +52,9 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 
 ## 支払い
 
+- 受け取り方は「銀行振込（日本の口座）」「PayPal（海外の方も可）」「受け取らない」。どれも手数料は当社負担。PayPalは管理画面「支払い」からCSV（メールアドレス・金額）を書き出して送り、送ったら「振込済み」にする
+- 紹介の確認結果（受理／既存接点あり／対象外）は、管理画面で押したときに紹介者の言語でメールが届く。リンク経由の自動受理でも届く
+
 - 振込済みにすると、支払通知書PDFを作って Supabase Storage（非公開バケット `statements`）に保存し、紹介者にメールで知らせる。インボイス登録番号のある紹介者の分は仕入明細書の形
 - 全銀データ（総合振込・Shift_JIS・120バイト固定長）は、管理画面「支払い」で振込元の口座（委託者コードなど）を登録すると書き出せる
 - 士業の紹介者は、管理画面「紹介者」で「税理士に確認済み」にするまで支払いの下書きを作らない
@@ -50,4 +62,4 @@ Consilegy 紹介パートナープラットフォーム（referral.consilegy.com
 
 ## マイグレーション
 
-`supabase/migrations/` の 0002 → 0003 の順に SQL Editor で実行する。
+`supabase/migrations/` の 0002 → 0003 → 0004 → 0005 の順に SQL Editor で実行する（0004 は英語版、0005 はPayPal。何度実行しても同じ結果）。

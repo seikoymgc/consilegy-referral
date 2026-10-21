@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { currentPartner } from "@/lib/auth";
 import { STATEMENT_BUCKET, issueStatement } from "@/lib/statement";
+import { messages } from "@/lib/i18n";
 
 // 支払通知書PDF。紹介者は自分の支払いのものだけ。管理者は運営会社の支払いすべて。
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -15,7 +16,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const { data: payout } = await q.maybeSingle();
   if (!payout) return NextResponse.json({ error: "not_found" }, { status: 404 });
   if (payout.status !== "paid") {
-    return NextResponse.json({ error: "not_paid", message: "支払通知書は振込後に発行されます" }, { status: 409 });
+    return NextResponse.json({ error: "not_paid", message: messages(me.locale).errors.statementNotPaid }, { status: 409 });
   }
 
   const key = payout.statement_pdf_path ?? (await issueStatement(payout.id));

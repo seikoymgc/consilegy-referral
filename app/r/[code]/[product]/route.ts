@@ -28,15 +28,18 @@ export async function GET(
       .maybeSingle(),
   ]);
 
-  // 準備中・非公開の製品、無効な紹介コードはトップへ
+  const search = new URL(req.url).searchParams;
+  const lang = search.get("lang");
+  // 準備中・非公開の製品、無効な紹介コードはトップへ（英語のリンクは英語のトップへ）
   if (!product || product.status !== "public" || !product.destination_url) {
-    return NextResponse.redirect(new URL("/", req.url), 302);
+    return NextResponse.redirect(new URL(lang === "en" ? "/en/" : "/", req.url), 302);
   }
   const res = NextResponse.redirect(
     editionDestination(
       slug,
       product.destination_url,
-      new URL(req.url).searchParams.get("edition"),
+      search.get("edition"),
+      lang,
     ),
     302,
   );

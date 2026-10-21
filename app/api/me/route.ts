@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { SESSION_COOKIE, revokeAllSessions } from "@/lib/auth";
 import { apiPartner } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
+import { LOCALE_COOKIE, localeCookieOptions, localePath, messages, toLocale } from "@/lib/i18n";
 
 export async function GET(req: Request) {
   const p = await apiPartner(req);
@@ -15,19 +16,27 @@ async function update(req: Request, b: Record<string, string>) {
   if (p instanceof NextResponse) return p;
   const invoice = (b.invoice_number ?? "").toUpperCase();
   if (invoice && !/^T\d{13}$/.test(invoice)) {
-    return respond(req, withParam("/my/settings/", "error", "インボイス登録番号は T＋13桁 で入れてください"),
+    return respond(req, withParam("/my/settings/", "error", messages(p.locale).errors.invoice),
       { error: "invalid_invoice_number" }, 400);
+  }
+  const method = b.payout_method === "none" ? "none" : b.payout_method === "paypal" ? "paypal" : "bank";
+  if (method === "paypal" && !p.paypal_email) {
+    return respond(req, withParam("/my/settings/", "error", messages(p.locale).errors.paypalRequired),
+      { error: "paypal_email_required" }, 400);
   }
   const { error } = await db().from("partners").update({
     name: b.name || p.name,
     company: b.company || null,
     phone: b.phone || null,
     invoice_number: invoice || null,
-    payout_method: b.payout_method === "none" ? "none" : "bank",
+    payout_method: method,
     marketing_opt_in: b.marketing === "on" || b.marketing === "true",
+    locale: b.locale ? toLocale(b.locale) : p.locale, // 表示とメールの言語
   }).eq("id", p.id);
   if (error) throw new Error(error.message);
-  return respond(req, withParam("/my/settings/", "saved", "1"), { ok: true });
+  const res = respond(req, withParam("/my/settings/", "saved", "1"), { ok: true });
+  if (b.locale) res.cookies.set(LOCALE_COOKIE, toLocale(b.locale), localeCookieOptions());
+  return res;
 }
 
 // 退会：新しい紹介を止め、個人情報を消す。確定済み未払いの報酬は次の支払日に払う
@@ -44,7 +53,7 @@ async function withdraw(req: Request) {
     // 未払いの報酬を払うため、振込先は支払いが済むまで残す（支払い後に消す）
   }).eq("id", p.id);
   await revokeAllSessions(p.id);
-  const res = respond(req, "/?withdrawn=1", { ok: true });
+  const res = respond(req, `${localePath(p.locale, "/")}?withdrawn=1`, { ok: true });
   res.cookies.delete(SESSION_COOKIE);
   return res;
 }

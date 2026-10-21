@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { encrypt, randomToken } from "@/lib/crypto";
 import { apiAdmin } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
+import { messages } from "@/lib/i18n";
 
 // 製品の追加・更新・公開状態の変更・通知キーの発行
 export async function POST(req: Request) {
@@ -10,15 +11,17 @@ export async function POST(req: Request) {
   if (admin instanceof NextResponse) return admin;
   const b = await readBody(req);
   const back = "/admin/products/";
+  const e = messages(admin.locale).admin.errors;
 
   if (b.action === "create") {
     if (!/^[a-z0-9-]+$/.test(b.slug ?? "") || !b.name) {
-      return respond(req, withParam(back, "error", "識別名は英小文字・数字・ハイフン、名前は必須です"), { error: "invalid" }, 400);
+      return respond(req, withParam(back, "error", e.productInvalid), { error: "invalid" }, 400);
     }
     const { error } = await db().from("products").insert({
       operator_id: admin.operator_id, slug: b.slug, name: b.name,
       status: ["public", "preparing", "hidden"].includes(b.status) ? b.status : "hidden",
       destination_url: b.destination_url || null, fit_summary: b.fit_summary || null,
+      fit_summary_en: b.fit_summary_en || null,
       sort_order: Number(b.sort_order || 0),
     });
     if (error) return respond(req, withParam(back, "error", error.message), { error: error.message }, 400);
@@ -28,7 +31,8 @@ export async function POST(req: Request) {
   if (b.action === "update" && b.id) {
     await db().from("products").update({
       name: b.name, status: b.status, destination_url: b.destination_url || null,
-      fit_summary: b.fit_summary || null, sort_order: Number(b.sort_order || 0),
+      fit_summary: b.fit_summary || null, fit_summary_en: b.fit_summary_en || null,
+      sort_order: Number(b.sort_order || 0),
     }).eq("id", b.id).eq("operator_id", admin.operator_id);
     return respond(req, withParam(back, "saved", "1"), { ok: true });
   }
@@ -49,5 +53,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, key });
   }
 
-  return respond(req, withParam(back, "error", "不明な操作です"), { error: "unknown_action" }, 400);
+  return respond(req, withParam(back, "error", e.unknownAction), { error: "unknown_action" }, 400);
 }

@@ -1,6 +1,7 @@
 import { requirePartner } from "@/lib/auth";
 import { listCommissions, listPayouts } from "@/lib/queries";
-import { COMMISSION_STATUS_LABEL, KIND_LABEL, yen, ymd } from "@/lib/referrals";
+import { displayCompany, yen, ymd } from "@/lib/referrals";
+import { formatMonth, messages } from "@/lib/i18n";
 import {
   EmptyState,
   PartnerShell,
@@ -11,6 +12,10 @@ export const instant = false;
 
 export default async function MyRewards() {
   const p = await requirePartner();
+  const lc = p.locale;
+  const t = messages(lc).rewards;
+  const labels = messages(lc).labels;
+  const count = messages(lc).common.count;
   const [comms, payouts] = await Promise.all([
     listCommissions(p.id),
     listPayouts(p.id),
@@ -30,84 +35,71 @@ export default async function MyRewards() {
     <PartnerShell
       partner={p}
       current="/my/rewards/"
-      title="報酬・支払い"
-      description="つながりから生まれた報酬と、お支払いの履歴を確認できます。"
+      title={t.title}
+      description={t.description}
     >
-      <section className="reward-summary" aria-label="報酬の概要">
+      <section className="reward-summary" aria-label={messages(lc).home.overviewAria}>
         <div className="reward-summary-primary">
-          <p>累計の確定報酬</p>
-          <strong>{yen(total)}</strong>
-          <span>お支払い済みの報酬を含みます</span>
+          <p>{t.total}</p>
+          <strong>{yen(total, lc)}</strong>
+          <span>{t.totalNote}</span>
         </div>
         <div>
-          <p>繰り越し中</p>
-          <strong>{yen(carry)}</strong>
-          <span>次回以降のお支払い対象</span>
+          <p>{t.carry}</p>
+          <strong>{yen(carry, lc)}</strong>
+          <span>{t.carryNote}</span>
         </div>
         <div>
-          <p>支払予定の合計</p>
-          <strong>{yen(scheduled)}</strong>
-          <span>お支払い予定として計上済み</span>
+          <p>{t.scheduled}</p>
+          <strong>{yen(scheduled, lc)}</strong>
+          <span>{t.scheduledNote}</span>
         </div>
       </section>
       <div className="payment-guide">
         <span aria-hidden="true">¥</span>
         <div>
-          <strong>合計5,000円以上の月に、まとめてお振込み。</strong>
-          <p>
-            月末締め・翌月末払い。5,000円未満の場合は翌月以降に繰り越します。
-          </p>
-          {balance < 0 && (
-            <p>
-              取り消された報酬 {yen(-balance)} は、次回以降の報酬と相殺します。
-            </p>
-          )}
-          {p.payout_method === "none" && (
-            <p>
-              「報酬を受け取らない」を選んでいるため、お支払いは作られません。
-            </p>
-          )}
+          <strong>{t.guideTitle}</strong>
+          <p>{t.guideText}</p>
+          {balance < 0 && <p>{t.offset(yen(-balance, lc))}</p>}
+          {p.payout_method === "none" && <p>{t.noPayout}</p>}
         </div>
       </div>
       <section className="card">
         <div className="panel-heading">
           <div>
             <p className="eyebrow">REWARD DETAILS</p>
-            <h2>報酬明細</h2>
+            <h2>{t.detailsTitle}</h2>
           </div>
-          <span className="record-count">{comms.length}件</span>
+          <span className="record-count">{count(comms.length)}</span>
         </div>
         {comms.length === 0 ? (
-          <EmptyState
-            title="報酬の記録は、これから。"
-            description="紹介先の有料契約と入金が確認されると、報酬の明細がここに表示されます。"
-          />
+          <EmptyState title={t.detailsEmptyTitle} description={t.detailsEmptyText} />
         ) : (
           <div className="scroll">
             <table>
               <thead>
                 <tr>
-                  <th>確定日</th>
-                  <th>製品</th>
-                  <th>紹介先</th>
-                  <th>種類</th>
-                  <th>金額</th>
-                  <th>状態</th>
+                  <th>{t.colDate}</th>
+                  <th>{t.colProduct}</th>
+                  <th>{t.colCompany}</th>
+                  <th>{t.colKind}</th>
+                  <th>{t.colAmount}</th>
+                  <th>{t.colStatus}</th>
                 </tr>
               </thead>
               <tbody>
                 {comms.map((c) => (
                   <tr key={c.id}>
                     <td className="date-cell">
-                      {ymd(c.confirmed_at ?? c.created_at)}
+                      {ymd(c.confirmed_at ?? c.created_at, lc)}
                     </td>
                     <td>{c.product_name}</td>
-                    <td>{c.company_name}</td>
-                    <td>{KIND_LABEL[c.kind] ?? c.kind}</td>
-                    <td className="amount-cell">{yen(c.amount)}</td>
+                    <td>{displayCompany(c.company_name, lc)}</td>
+                    <td>{labels.kind[c.kind] ?? c.kind}</td>
+                    <td className="amount-cell">{yen(c.amount, lc)}</td>
                     <td>
                       <StatusBadge status={c.status}>
-                        {COMMISSION_STATUS_LABEL[c.status] ?? c.status}
+                        {labels.commissionStatus[c.status] ?? c.status}
                       </StatusBadge>
                     </td>
                   </tr>
@@ -121,36 +113,33 @@ export default async function MyRewards() {
         <div className="panel-heading">
           <div>
             <p className="eyebrow">PAYMENT HISTORY</p>
-            <h2>支払履歴</h2>
+            <h2>{t.historyTitle}</h2>
           </div>
-          <span className="record-count">{payouts.length}件</span>
+          <span className="record-count">{count(payouts.length)}</span>
         </div>
         {payouts.length === 0 ? (
-          <EmptyState
-            title="お支払いの履歴はありません。"
-            description="お支払いの状況と、振込後の支払通知書をここで確認できます。"
-          />
+          <EmptyState title={t.historyEmptyTitle} description={t.historyEmptyText} />
         ) : (
           <div className="scroll">
             <table>
               <thead>
                 <tr>
-                  <th>対象月</th>
-                  <th>支払日</th>
-                  <th>金額</th>
-                  <th>状態</th>
-                  <th>支払通知書</th>
+                  <th>{t.colMonth}</th>
+                  <th>{t.colPaidOn}</th>
+                  <th>{t.colAmount}</th>
+                  <th>{t.colStatus}</th>
+                  <th>{t.colStatement}</th>
                 </tr>
               </thead>
               <tbody>
                 {payouts.map((x) => (
                   <tr key={x.id}>
-                    <td className="date-cell">{x.month.slice(0, 7)}</td>
-                    <td className="date-cell">{ymd(x.paid_on)}</td>
-                    <td className="amount-cell">{yen(x.amount)}</td>
+                    <td className="date-cell">{formatMonth(x.month, lc)}</td>
+                    <td className="date-cell">{ymd(x.paid_on, lc)}</td>
+                    <td className="amount-cell">{yen(x.amount, lc)}</td>
                     <td>
                       <StatusBadge status={x.status}>
-                        {x.status === "paid" ? "振込済み" : "お支払い予定"}
+                        {x.status === "paid" ? t.paid : t.scheduledStatus}
                       </StatusBadge>
                     </td>
                     <td>
@@ -159,7 +148,7 @@ export default async function MyRewards() {
                           className="statement-link"
                           href={`/api/payouts/${x.id}/statement/`}
                         >
-                          通知書 PDF ↗
+                          {t.statementLink}
                         </a>
                       ) : (
                         "—"

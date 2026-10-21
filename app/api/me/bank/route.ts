@@ -4,11 +4,13 @@ import { encrypt } from "@/lib/crypto";
 import { sendMail } from "@/lib/mail";
 import { apiPartner } from "@/lib/guard";
 import { readBody, respond, withParam } from "@/lib/http";
+import { messages } from "@/lib/i18n";
 
 async function save(req: Request) {
   const p = await apiPartner(req);
   if (p instanceof NextResponse) return p;
   const b = await readBody(req);
+  const t = messages(p.locale);
 
   const bank = {
     bank_code: (b.bank_code ?? "").replace(/\D/g, ""),
@@ -20,8 +22,7 @@ async function save(req: Request) {
   const valid = /^\d{4}$/.test(bank.bank_code) && /^\d{3}$/.test(bank.branch_code)
     && /^\d{7}$/.test(bank.account_number) && bank.holder_kana.length > 0;
   if (!valid) {
-    return respond(req, withParam("/my/settings/", "error",
-      "銀行コード4桁・支店コード3桁・口座番号7桁・口座名義（カナ）を入れてください"),
+    return respond(req, withParam("/my/settings/", "error", t.errors.bank),
       { error: "invalid_bank" }, 400);
   }
 
@@ -34,8 +35,9 @@ async function save(req: Request) {
   if (hadBank) {
     await sendMail({
       to: p.email,
-      subject: "【Consilegy 紹介パートナー】振込先が変更されました",
-      text: `${p.name} 様\n\n振込先が変更されました（口座番号 下4桁：${bank.account_number.slice(-4)}）。\nお心当たりのない場合は、お問い合わせフォームからご連絡ください。\nhttps://consilegy.com/contact/`,
+      locale: p.locale,
+      subject: t.mail.bankChangedSubject,
+      text: t.mail.bankChangedBody(p.name, bank.account_number.slice(-4)),
     });
   }
   return respond(req, withParam("/my/settings/", "saved", "1"), { ok: true, last4: bank.account_number.slice(-4) });
