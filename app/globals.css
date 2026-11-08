@@ -2957,15 +2957,8 @@ label,
 }
 
 .promise-section p.promise-stat {
-  margin-top: 22px;
-  font-size: 15px;
+  margin-top: 18px;
   line-height: 1.9;
-  color: var(--text, inherit);
-}
-.promise-stat strong {
-  font-size: 26px;
-  color: var(--accent);
-  margin: 0 2px;
 }
 .promise-section p.promise-source {
   font-size: 11px;

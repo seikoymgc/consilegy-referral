@@ -50,19 +50,19 @@ export default async function Home({
         <section className="hero">
           <div className="hero-copy">
             <p className="eyebrow">
-              <span className="status-dot" /> CONSILEGY PARTNER PROGRAM
+              <span className="status-dot" /> Consilegy 紹介パートナー制度
             </p>
             <h1>
-              紹介しても、
+              「どこか、いいところ
               <br />
-              <span>気まずくならない。</span>
+              知らない？」と
+              <br />
+              <span>聞かれたら。</span>
             </h1>
             <p className="hero-description">
-              紹介先の同意がない限り、こちらから連絡はしません。
+              顧客や案件の管理に困っている知り合いに、紹介文を転送するだけ。
               <br />
-              合わない会社には、合わないと正直にお伝えします。
-              <br />
-              あなたの作業は、紹介文の転送だけ。報酬も受け取れます。
+              ご案内からご相談まで、私たちが引き受けます。
             </p>
             <div className="actions">
               <a href="#signup" className="button action-primary">
@@ -73,7 +73,8 @@ export default async function Home({
               </a>
             </div>
             <p className="hero-note">
-              登録・利用無料 <span>／</span> 製品の知識・営業経験は不要
+              ご紹介先の同意なく、こちらから連絡はしません <span>／</span>{" "}
+              登録・利用無料
             </p>
           </div>
           <div
@@ -167,9 +168,7 @@ export default async function Home({
             </h2>
             <p>大切なつながりを、私たちも大切にします。</p>
             <p className="promise-stat">
-              紹介された側の<strong>86.9%</strong>が、
-              <br />
-              紹介されて「うれしい」と答えています。
+              紹介キャンペーンで紹介された人の86.9%が、「うれしい」と答えたという調査もあります。
             </p>
             <p className="promise-source">
               出典：株式会社DIGITALIO「紹介キャンペーンに関する調査」（2022年5月、紹介された経験がある237名の回答）
