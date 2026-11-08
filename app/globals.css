@@ -2955,3 +2955,22 @@ label,
     width: 100%;
   }
 }
+
+.promise-section p.promise-stat {
+  margin-top: 18px;
+  line-height: 1.9;
+}
+.promise-section p.promise-source {
+  font-size: 11px;
+  color: #a8a29e;
+  margin-top: 6px;
+}
+.product-scene {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.7;
+  margin: 10px 0 6px;
+}
+.benefit-strip + .promise-section {
+  margin-top: 56px;
+}

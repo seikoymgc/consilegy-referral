@@ -25,10 +25,10 @@ const RULES = [
 
 // 同ページの「お約束」の原文
 const PROMISES = [
-  "製品の知識は要りません。",
-  "営業やクロージングも要りません。",
   "紹介先の同意がない限り、こちらから連絡はしません。",
   "紹介先に無理な営業はしません。合わない会社には、合わないと正直に伝えます。",
+  "製品の知識は要りません。",
+  "営業やクロージングも要りません。",
 ];
 
 export default async function Home({
@@ -50,17 +50,19 @@ export default async function Home({
         <section className="hero">
           <div className="hero-copy">
             <p className="eyebrow">
-              <span className="status-dot" /> CONSILEGY PARTNER PROGRAM
+              <span className="status-dot" /> Consilegy 紹介パートナー制度
             </p>
             <h1>
-              「あの会社に、
+              「どこか、いいところ
               <br />
-              <span>教えたい</span>」
+              知らない？」と
+              <br />
+              <span>聞かれたら。</span>
             </h1>
             <p className="hero-description">
-              Consilegyの製品を紹介すると、報酬が受け取れます。
+              顧客や案件の管理に困っている知り合いに、紹介文を転送するだけ。
               <br />
-              あなたの作業は、紹介文の転送だけです。
+              ご案内からご相談まで、私たちが引き受けます。
             </p>
             <div className="actions">
               <a href="#signup" className="button action-primary">
@@ -71,7 +73,8 @@ export default async function Home({
               </a>
             </div>
             <p className="hero-note">
-              登録・利用無料 <span>／</span> 製品の知識・営業経験は不要
+              ご紹介先の同意なく、こちらから連絡はしません <span>／</span>{" "}
+              登録・利用無料
             </p>
           </div>
           <div
@@ -155,6 +158,35 @@ export default async function Home({
           </p>
         </div>
 
+        <section className="promise-section">
+          <div>
+            <p className="eyebrow">OUR PROMISE</p>
+            <h2>
+              あなたがするのは、
+              <br />
+              つなぐだけ。
+            </h2>
+            <p>大切なつながりを、私たちも大切にします。</p>
+            <p className="promise-stat">
+              紹介キャンペーンで紹介された人の86.9%が、「うれしい」と答えたという調査もあります。
+            </p>
+            <p className="promise-source">
+              出典：株式会社DIGITALIO「紹介キャンペーンに関する調査」（2022年5月、紹介された経験がある237名の回答）
+            </p>
+            <span className="promise-flower" aria-hidden="true">
+              ✳
+            </span>
+          </div>
+          <ul>
+            {PROMISES.map((t, i) => (
+              <li key={t}>
+                <span>0{i + 1}</span>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section id="products" className="landing-section products-section">
           <div className="section-heading">
             <div>
@@ -186,6 +218,7 @@ export default async function Home({
                 </div>
                 <h3>{p.name}</h3>
                 {p.audience && <p className="product-audience">{p.audience}</p>}
+                {p.scene && <p className="product-scene">{p.scene}</p>}
                 <p className="product-description">
                   {p.fit_summary ||
                     (p.status === "preparing"
@@ -222,29 +255,6 @@ export default async function Home({
               <p className="card">現在、紹介できる製品を準備しています。</p>
             )}
           </div>
-        </section>
-
-        <section className="promise-section">
-          <div>
-            <p className="eyebrow">OUR PROMISE</p>
-            <h2>
-              あなたがするのは、
-              <br />
-              つなぐだけ。
-            </h2>
-            <p>大切なつながりを、私たちも大切にします。</p>
-            <span className="promise-flower" aria-hidden="true">
-              ✳
-            </span>
-          </div>
-          <ul>
-            {PROMISES.map((t, i) => (
-              <li key={t}>
-                <span>0{i + 1}</span>
-                {t}
-              </li>
-            ))}
-          </ul>
         </section>
 
         <section id="how-it-works" className="landing-section">

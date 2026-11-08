@@ -13,6 +13,7 @@ export const REVENUE_EDITIONS = {
     name: "Revenue CRM — 法人営業",
     label: "法人営業版",
     audience: "B2B・法人営業向け",
+    scene: "「案件の管理、エクセルで限界」と聞いたら。",
     description:
       "見込み客から商談・受注までをひとつに。案件の進捗やフォローを管理したい会社に。",
     fit: "見込み客・商談・受注をまとめて管理したい法人営業の組織。担当者ごとのフォローや案件の進捗を見えるようにしたい会社に。",
@@ -22,6 +23,7 @@ export const REVENUE_EDITIONS = {
     name: "Revenue CRM — 受託開発",
     label: "受託開発版",
     audience: "B2B・支援会社・制作会社向け",
+    scene: "「次の案件、いつから着手できるか読めない」と聞いたら。",
     description:
       "案件・見積・稼働・納品をひとつに。着手できる時期や、受注後の工程まで見通したい会社に。",
     fit: "案件や見積、メンバーの稼働、納品までをまとめたい受託開発・制作・支援会社。見積前に着手時期を確かめたい方に。",
@@ -31,6 +33,7 @@ export const REVENUE_EDITIONS = {
     name: "Revenue CRM — 代理店",
     label: "代理店版",
     audience: "B2B・SaaSリセラー向け",
+    scene: "「契約の更新、うっかり漏れそう」と聞いたら。",
     description:
       "顧客の契約・更新・継続収益をひとつに。更新の抜け漏れや解約リスクを早めにつかみたい代理店に。",
     fit: "SaaSやライセンスを販売する代理店・リセラー。顧客ごとの契約更新や継続収益を管理し、追加提案や更新対応を整えたい会社に。",
@@ -40,6 +43,7 @@ export const REVENUE_EDITIONS = {
     name: "Revenue CRM — スクール",
     label: "スクール版",
     audience: "B2C・教室・スクール向け",
+    scene: "「生徒の管理と月謝の集金が大変」と聞いたら。",
     description:
       "生徒の在籍・レッスン・月謝をひとつに。生徒への連絡や教室運営を整えたいスクールに。",
     fit: "生徒の在籍・休会・退会、レッスン記録、月謝をまとめて管理したい教室・スクール。講師間の引き継ぎや、生徒への連絡を整えたい方に。",
@@ -66,6 +70,7 @@ export function productOffers(products: ProductCard[]) {
           key: product.id,
           edition: undefined as RevenueEdition | undefined,
           audience: "",
+          scene: "",
         },
       ];
     }
@@ -75,6 +80,7 @@ export function productOffers(products: ProductCard[]) {
       edition,
       name: REVENUE_EDITIONS[edition].name,
       audience: REVENUE_EDITIONS[edition].audience,
+      scene: REVENUE_EDITIONS[edition].scene as string,
       fit_summary: REVENUE_EDITIONS[edition].description,
     }));
   });
