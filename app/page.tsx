@@ -117,7 +117,6 @@ export default async function Home({
                 <small>きっかけを届ける</small>
                 <strong>あなた</strong>
               </div>
-              <span className="mini-star">✳</span>
             </div>
             <div className="intro-message">
               <span className="mail-icon">↗</span>
@@ -137,7 +136,6 @@ export default async function Home({
             <div className="reward-chip">
               <span>✧</span> つながりが、報酬に。
             </div>
-            <span className="art-spark spark-one">✳</span>
             <span className="art-spark spark-two">＋</span>
             <span className="art-bottom">GOOD CONNECTIONS GO A LONG WAY.</span>
           </div>
@@ -173,9 +171,6 @@ export default async function Home({
             <p className="promise-source">
               出典：株式会社DIGITALIO「紹介キャンペーンに関する調査」（2022年5月、紹介された経験がある237名の回答）
             </p>
-            <span className="promise-flower" aria-hidden="true">
-              ✳
-            </span>
           </div>
           <ul>
             {PROMISES.map((t, i) => (
@@ -200,14 +195,14 @@ export default async function Home({
             </p>
           </div>
           <div className="product-grid">
-            {productOffers(products).map((p, i) => (
+            {productOffers(products).map((p) => (
               <article
                 key={p.key}
                 className={`product-card ${p.status === "preparing" ? "product-preparing" : ""}`}
               >
                 <div className="product-top">
                   <span className="product-icon" aria-hidden="true">
-                    {i % 2 === 0 ? "↗" : "✳"}
+                    ↗
                   </span>
                   <span
                     className={`product-status ${p.status === "public" ? "is-public" : ""}`}
